@@ -55,7 +55,7 @@ function CollapsibleSection({
   children: ReactNode;
 }) {
   return (
-    <section className="glass shadow-panel rounded-[28px] p-5">
+    <section className="glass rounded-[28px] p-5">
       <button
         type="button"
         className="flex w-full items-start justify-between gap-4 text-left"

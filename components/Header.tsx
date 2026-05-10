@@ -24,10 +24,10 @@ export function Header({
   onApplyPitchFlow
 }: HeaderProps) {
   return (
-    <header className="glass shadow-panel rounded-[28px] px-6 py-5">
+    <header className="glass shadow-panel rounded-[30px] px-6 py-5">
       <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
         <div className="space-y-3">
-          <div className="inline-flex items-center rounded-full bg-[rgba(15,118,110,0.12)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--teal)]">
+          <div className="inline-flex items-center rounded-full border border-[rgba(15,118,110,0.14)] bg-[rgba(255,255,255,0.74)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--teal)]">
             PID MVP
           </div>
           <div>
@@ -42,12 +42,12 @@ export function Header({
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
-              className="rounded-full bg-[var(--teal)] px-4 py-2 text-sm font-semibold text-white"
+              className="rounded-full bg-[linear-gradient(135deg,var(--teal),#159b8f)] px-4 py-2 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(15,118,110,0.22)]"
               onClick={onApplyPitchFlow}
             >
               Pitch rapido: Investidor + Hidrogenio verde + Bahia
             </button>
-            <div className="rounded-full border border-[var(--border)] bg-white/70 px-4 py-2 text-sm text-[var(--muted)]">
+            <div className="rounded-full border border-[var(--border)] bg-white/78 px-4 py-2 text-sm text-[var(--muted)]">
               Use este atalho para entrar no fluxo principal da apresentacao.
             </div>
           </div>
@@ -89,7 +89,7 @@ export function Header({
           </label>
           <button
             type="button"
-            className="rounded-2xl bg-[var(--navy)] px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+            className="rounded-2xl bg-[linear-gradient(135deg,var(--navy),#1f5f73)] px-4 py-3 text-sm font-semibold text-white transition hover:opacity-92"
             onClick={onToggleChat}
           >
             {chatOpen ? "Ocultar chatbot" : "Abrir chatbot"}
