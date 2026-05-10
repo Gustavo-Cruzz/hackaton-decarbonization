@@ -49,7 +49,7 @@ export function TerritoryPanel({
   const compositionTotal = averageAssetValue(compositionEntries.map((entry) => entry.value));
 
   return (
-    <aside className="surface-strong rounded-[28px] p-6 shadow-panel" aria-live="polite">
+    <aside className="surface-strong rounded-[24px] p-5 shadow-panel" aria-live="polite">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">Territorio selecionado</p>
@@ -65,7 +65,7 @@ export function TerritoryPanel({
         </div>
       </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+      <div className="mt-3 grid gap-3 sm:grid-cols-2">
         <button type="button" className="rounded-[20px] bg-[var(--navy)] px-4 py-3 text-sm font-semibold text-white" onClick={onCompare}>
           {isCompared ? "Remover da comparacao" : "Comparar"}
         </button>
@@ -78,7 +78,7 @@ export function TerritoryPanel({
         </button>
       </div>
 
-      <div className="mt-5 grid gap-3 md:grid-cols-2">
+      <div className="mt-4 grid gap-3 md:grid-cols-2">
         <div className="rounded-[24px] bg-[rgba(15,118,110,0.1)] p-4">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--teal)]">Melhor sinal</p>
           <p className="mt-2 text-sm font-medium text-[var(--foreground)]">{strongestSignal}</p>
@@ -89,7 +89,7 @@ export function TerritoryPanel({
         </div>
       </div>
 
-      <div className="mt-5 rounded-[24px] bg-[rgba(19,53,75,0.08)] p-4">
+      <div className="mt-4 rounded-[22px] bg-[rgba(19,53,75,0.08)] p-3.5">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--navy)]">Por que este territorio agora</p>
         <p className="mt-2 text-sm text-[var(--foreground)]">{active.explanation}</p>
         <p className="mt-1 text-xs text-[var(--muted)]">Leitura atual alinhada ao perfil {profile.label.toLowerCase()}.</p>
@@ -112,7 +112,7 @@ export function TerritoryPanel({
         ) : null}
       </div>
 
-      <div className="mt-5 grid gap-4 md:grid-cols-2">
+      <div className="mt-4 grid gap-3 md:grid-cols-2">
         <div className="rounded-[24px] border border-[rgba(15,118,110,0.16)] bg-[rgba(15,118,110,0.05)] p-4">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--teal)]">Dimensao dominante</p>
           <div className="mt-2">
@@ -133,7 +133,7 @@ export function TerritoryPanel({
         </div>
       </div>
 
-      <div className="mt-5 space-y-3">
+      <div className="mt-4 space-y-2.5">
         {Object.entries(scores).map(([key, value]) => {
           const average = comparisonAverage[key as keyof Scores];
           return (
@@ -152,12 +152,12 @@ export function TerritoryPanel({
         })}
       </div>
 
-      <div className="mt-5 rounded-[24px] bg-[rgba(15,118,110,0.08)] p-4">
+      <div className="mt-4 rounded-[22px] bg-[rgba(15,118,110,0.08)] p-3.5">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--teal)]">Recomendacao</p>
         <p className="mt-2 text-base text-[var(--foreground)]">{active.recommendations[0]}</p>
       </div>
 
-      <details className="mt-5 rounded-[24px] border border-[var(--border)] bg-white/75 p-4">
+      <details className="mt-4 rounded-[22px] border border-[var(--border)] bg-white/75 p-3.5">
         <summary className="cursor-pointer text-xs font-semibold uppercase tracking-[0.18em] text-[var(--navy)]">
           Abrir detalhamento territorial
         </summary>
@@ -204,7 +204,7 @@ export function TerritoryPanel({
       </details>
 
       {!isMunicipal && selectedState.scoreSources ? (
-        <details className="mt-5 rounded-[24px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+        <details className="mt-4 rounded-[22px] border border-[var(--border)] bg-[var(--surface-soft)] p-3.5">
           <summary className="cursor-pointer text-xs font-semibold uppercase tracking-[0.18em] text-[var(--navy)]">
             Como o IMTE foi montado
           </summary>

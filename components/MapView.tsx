@@ -104,15 +104,15 @@ export function MapView({
       : selected.state;
 
   return (
-    <section className="glass shadow-panel rounded-[32px] p-6">
-      <div className="mb-4 flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
+    <section className="glass shadow-panel rounded-[28px] p-5">
+      <div className="mb-3 flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
         <div>
-          <div className="mb-2 inline-flex items-center rounded-full bg-[rgba(19,53,75,0.08)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--navy)]">
+          <div className="mb-1.5 inline-flex items-center rounded-full bg-[rgba(19,53,75,0.08)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--navy)]">
             Exploracao geoespacial ativa
           </div>
           <h2 className="text-2xl font-semibold text-[var(--navy)]">Mapa analitico Brasil → UF → municipios</h2>
-          <p className="text-sm text-[var(--muted)]">
-            O mapa agora concentra a navegacao principal; os detalhes complementares ficam no trilho lateral.
+          <p className="mt-1 text-sm text-[var(--muted)]">
+            O mapa concentra a navegacao principal; analise e ajuste ficam colados ao contexto.
           </p>
         </div>
 
@@ -137,9 +137,9 @@ export function MapView({
         </div>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.45fr)_320px]">
-        <div className="space-y-4">
-          <div className="rounded-[24px] bg-[linear-gradient(135deg,rgba(19,53,75,0.96),rgba(15,118,110,0.92))] p-4 text-white">
+      <div className="grid gap-3 xl:grid-cols-[minmax(0,1.55fr)_300px]">
+        <div className="space-y-3">
+          <div className="rounded-[22px] bg-[linear-gradient(135deg,rgba(19,53,75,0.96),rgba(15,118,110,0.92))] p-3.5 text-white">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Foco atual</p>
@@ -156,8 +156,8 @@ export function MapView({
             </div>
           </div>
 
-          <div className="surface-strong rounded-[24px] p-4">
-            <div className="flex flex-col gap-4">
+          <div className="surface-strong rounded-[22px] p-3.5">
+            <div className="flex flex-col gap-3">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">Escala</span>
                 <div className="flex flex-wrap gap-2">
@@ -208,7 +208,7 @@ export function MapView({
                 </div>
               </div>
 
-              <div className="overflow-hidden rounded-[24px]">
+              <div className="overflow-hidden rounded-[22px]">
                 <LeafletMapCanvas
                   ranked={ranked}
                   municipalities={municipalities}
@@ -232,8 +232,8 @@ export function MapView({
           </div>
         </div>
 
-        <div className="space-y-4">
-          <div className="surface-strong rounded-[24px] p-4">
+        <div className="space-y-3">
+          <div className="surface-strong rounded-[22px] p-3.5">
             <div className="flex flex-wrap gap-2">
               {layerGroups.map((group) => (
                 <button
@@ -249,10 +249,10 @@ export function MapView({
                 </button>
               ))}
             </div>
-            <p className="mt-3 text-sm text-[var(--muted)]">
+            <p className="mt-2 text-sm text-[var(--muted)]">
               {layerGroups.find((group) => group.key === activeTheme)?.description ?? "Selecione um tema para explorar as camadas."}
             </p>
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="mt-3 flex flex-wrap gap-2">
               {layerDefinitions
                 .filter((layer) => !activeTheme || layer.group === activeTheme)
                 .map((layer) => (
@@ -272,7 +272,7 @@ export function MapView({
                   </button>
                 ))}
             </div>
-            <div className="mt-4 flex flex-wrap items-center gap-2">
+            <div className="mt-3 flex flex-wrap items-center gap-2">
               <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">Camadas ativas</span>
               {activeLayers.map((layerKey) => (
                 <span
@@ -283,7 +283,7 @@ export function MapView({
                 </span>
               ))}
             </div>
-            <p className="mt-3 text-xs text-[var(--muted)]">Tema ativo: {activeThemeLabel}.</p>
+            <p className="mt-2 text-xs text-[var(--muted)]">Tema ativo: {activeThemeLabel}.</p>
           </div>
 
           <LegendCard legend={legend} />

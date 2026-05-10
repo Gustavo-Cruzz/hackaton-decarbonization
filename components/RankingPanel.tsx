@@ -25,7 +25,7 @@ interface RankingPanelProps {
 
 export function RankingPanel({ ranked, selectedUf, objective, profile, onSelectUf, compact }: RankingPanelProps) {
   return (
-    <section className="glass shadow-panel rounded-[28px] p-5">
+    <section className={compact ? "glass shadow-panel rounded-[24px] p-4" : "glass shadow-panel rounded-[28px] p-5"}>
       {!compact ? (
         <div>
           <h2 className="text-xl font-semibold text-[var(--navy)]">Ranking territorial</h2>
@@ -38,7 +38,7 @@ export function RankingPanel({ ranked, selectedUf, objective, profile, onSelectU
           {objectiveLabel(objective)} com leitura adaptada para {profileLabel(profile).toLowerCase()}.
         </p>
       )}
-      <div className="mt-4 space-y-3">
+      <div className="mt-3 space-y-2.5">
         {ranked.map((territory) => {
           const isTopThree = territory.rank <= 3;
           return (

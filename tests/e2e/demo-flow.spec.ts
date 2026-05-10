@@ -45,7 +45,6 @@ test("critical pitch flow works end-to-end", async ({ page }) => {
   await page.getByRole("button", { name: /Comparacao guiada/i }).first().click();
   await expect(page.getByText("Territorios escolhidos")).toBeVisible();
   await page.getByRole("button", { name: /Ranking territorial/i }).first().click();
-  await page.getByRole("button", { name: /Indice personalizavel/i }).first().click();
   await expect(page.getByLabel("Peso energia limpa")).toBeVisible();
 
   const downloadPromise = page.waitForEvent("download");

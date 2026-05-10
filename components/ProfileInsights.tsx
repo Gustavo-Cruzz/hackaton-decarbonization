@@ -12,7 +12,7 @@ interface ProfileInsightsProps {
 
 export function ProfileInsights({ profile, onAskSuggestedQuestion }: ProfileInsightsProps) {
   return (
-    <section className="glass rounded-[28px] p-5">
+    <section className="glass rounded-[24px] p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-xl font-semibold text-[var(--navy)]">Perfil ativo</h2>
@@ -22,17 +22,17 @@ export function ProfileInsights({ profile, onAskSuggestedQuestion }: ProfileInsi
           {profile.label}
         </div>
       </div>
-      <p className="mt-4 rounded-2xl bg-[rgba(22,56,77,0.05)] p-4 text-sm text-[var(--foreground)]">
+      <p className="mt-3 rounded-2xl bg-[rgba(22,56,77,0.05)] p-3.5 text-sm text-[var(--foreground)]">
         A narrativa prioriza {profile.tone}.
       </p>
-      <div className="mt-4 grid gap-3 md:grid-cols-3">
+      <div className="mt-3 grid gap-2.5 md:grid-cols-1">
         {profile.insightCards.map((item) => (
-          <div key={item} className="surface-strong rounded-2xl p-4 text-sm font-medium text-[var(--navy)]">
+          <div key={item} className="surface-strong rounded-2xl p-3.5 text-sm font-medium text-[var(--navy)]">
             {item}
           </div>
         ))}
       </div>
-      <div className="mt-4">
+      <div className="mt-3">
         <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">Perguntas sugeridas</div>
         <div className="mt-2 flex flex-wrap gap-2">
           {profile.suggestedQuestions.map((question) => (

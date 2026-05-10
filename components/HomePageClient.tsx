@@ -87,7 +87,7 @@ function CollapsibleSection({
   children: ReactNode;
 }) {
   return (
-    <section className="glass rounded-[28px] p-5">
+    <section className="glass rounded-[24px] p-4">
       <button
         type="button"
         className="flex w-full items-start justify-between gap-4 text-left"
@@ -120,7 +120,6 @@ export default function HomePageClient() {
   const [municipalityStatus, setMunicipalityStatus] = useState<"idle" | "loading" | "available" | "unavailable">("idle");
   const [comparisonOpen, setComparisonOpen] = useState(false);
   const [rankingOpen, setRankingOpen] = useState(false);
-  const [indexOpen, setIndexOpen] = useState(false);
 
   useEffect(() => {
     const persisted = loadDemoState(window.localStorage);
@@ -500,14 +499,14 @@ export default function HomePageClient() {
 
   if (!demoState.hasChosenProfile) {
     return (
-      <main className="mx-auto flex min-h-screen max-w-[1600px] flex-col gap-6 px-4 py-6 text-[15px] lg:px-6">
+      <main className="mx-auto flex min-h-screen w-full max-w-[1760px] flex-col gap-4 px-3 py-4 text-[15px] lg:px-4 lg:py-5">
         <ProfileOnboarding initialAnswers={demoState.onboardingAnswers} onComplete={completeOnboarding} />
       </main>
     );
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-[1600px] flex-col gap-6 px-4 py-6 text-[15px] lg:px-6">
+    <main className="mx-auto flex min-h-screen w-full max-w-[1760px] flex-col gap-4 px-3 py-4 text-[15px] lg:px-4 lg:py-5">
       <Header
         activeProfileLabel={demoState.activeProfileLabel}
         objective={demoState.objective}
@@ -524,30 +523,40 @@ export default function HomePageClient() {
       ) : (
         <>
           <ClientSectionBoundary label="a experiencia do mapa">
-            <section className="grid gap-6 xl:grid-cols-[minmax(0,1.75fr)_390px]">
-              <MapView
-                ranked={ranked}
-                municipalities={municipalities}
-                municipalityStatus={municipalityStatus}
-                selectedUf={selectedState.uf}
-                selectedMunicipalityId={demoState.selectedMunicipalityId}
-                mapLevel={demoState.mapLevel}
-                activeTheme={demoState.activeTheme}
-                enabledLayers={demoState.enabledLayers}
-                layerOpacity={demoState.layerOpacity}
-                useBasemap={demoState.useBasemap}
-                onSelectUf={handleSelectUf}
-                onSelectMunicipality={(selectedMunicipalityId) => updateDemoState({ selectedMunicipalityId, mapLevel: "municipal" })}
-                onToggleLayer={toggleLayer}
-                onSetActiveTheme={handleSetTheme}
-                onSetMapLevel={setMapLevel}
-                onSetLayerOpacity={(layerOpacity) => updateDemoState({ layerOpacity })}
-                onToggleBasemap={() => updateDemoState({ useBasemap: !demoState.useBasemap })}
-                onResetView={() => updateDemoState({ mapLevel: "national", selectedMunicipalityId: undefined })}
-                onShareView={() => void shareView()}
-                onDownloadTerritory={downloadTerritory}
-              />
-              <div className="space-y-6">
+            <section className="grid gap-4 xl:grid-cols-[minmax(0,1.9fr)_360px] xl:items-start">
+              <div className="space-y-4">
+                <MapView
+                  ranked={ranked}
+                  municipalities={municipalities}
+                  municipalityStatus={municipalityStatus}
+                  selectedUf={selectedState.uf}
+                  selectedMunicipalityId={demoState.selectedMunicipalityId}
+                  mapLevel={demoState.mapLevel}
+                  activeTheme={demoState.activeTheme}
+                  enabledLayers={demoState.enabledLayers}
+                  layerOpacity={demoState.layerOpacity}
+                  useBasemap={demoState.useBasemap}
+                  onSelectUf={handleSelectUf}
+                  onSelectMunicipality={(selectedMunicipalityId) => updateDemoState({ selectedMunicipalityId, mapLevel: "municipal" })}
+                  onToggleLayer={toggleLayer}
+                  onSetActiveTheme={handleSetTheme}
+                  onSetMapLevel={setMapLevel}
+                  onSetLayerOpacity={(layerOpacity) => updateDemoState({ layerOpacity })}
+                  onToggleBasemap={() => updateDemoState({ useBasemap: !demoState.useBasemap })}
+                  onResetView={() => updateDemoState({ mapLevel: "national", selectedMunicipalityId: undefined })}
+                  onShareView={() => void shareView()}
+                  onDownloadTerritory={downloadTerritory}
+                />
+                <CustomIndexBuilder
+                  objective={currentObjective}
+                  weights={demoState.weights}
+                  resetMessage={flashMessage}
+                  onUpdateWeight={updateWeight}
+                  onResetWeights={resetWeights}
+                  compact
+                />
+              </div>
+              <div className="space-y-4">
                 <TerritoryPanel
                   selectedState={selectedState}
                   selectedMunicipality={selectedMunicipality}
@@ -564,7 +573,7 @@ export default function HomePageClient() {
           </ClientSectionBoundary>
 
           <ClientSectionBoundary label="os paineis analiticos">
-            <section className="grid gap-6 xl:grid-cols-3">
+            <section className="grid gap-4 xl:grid-cols-2">
               <CollapsibleSection
                 title="Comparacao guiada"
                 description="Abra quando quiser comparar ate 3 estados lado a lado."
@@ -591,21 +600,6 @@ export default function HomePageClient() {
                   objective={demoState.objective}
                   profile={demoState.profile}
                   onSelectUf={handleSelectUf}
-                  compact
-                />
-              </CollapsibleSection>
-              <CollapsibleSection
-                title="Indice personalizavel"
-                description="Abra so se quiser ajustar pesos e recalcular a leitura."
-                isOpen={indexOpen}
-                onToggle={() => setIndexOpen((current) => !current)}
-              >
-                <CustomIndexBuilder
-                  objective={currentObjective}
-                  weights={demoState.weights}
-                  resetMessage={flashMessage}
-                  onUpdateWeight={updateWeight}
-                  onResetWeights={resetWeights}
                   compact
                 />
               </CollapsibleSection>

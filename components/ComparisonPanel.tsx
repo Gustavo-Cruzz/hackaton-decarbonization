@@ -14,9 +14,10 @@ interface ComparisonPanelProps {
 
 export function ComparisonPanel({ ranked, comparison, compareUfs, onToggleCompare, compact }: ComparisonPanelProps) {
   const selectedComparison = ranked.filter((territory) => compareUfs.includes(territory.uf));
+  const shellClassName = compact ? "glass shadow-panel rounded-[24px] p-4" : "glass shadow-panel rounded-[28px] p-5";
 
   return (
-    <section className="glass shadow-panel rounded-[28px] p-5">
+    <section className={shellClassName}>
       {!compact ? (
         <div className="flex items-center justify-between">
           <div>
@@ -51,7 +52,7 @@ export function ComparisonPanel({ ranked, comparison, compareUfs, onToggleCompar
           </div>
         </div>
       ) : null}
-      <div className="mt-4 flex max-h-[172px] flex-wrap gap-2 overflow-y-auto pr-1">
+      <div className="mt-3 flex max-h-[148px] flex-wrap gap-2 overflow-y-auto pr-1">
         {ranked.map((territory) => (
           <button
             key={territory.uf}
@@ -68,7 +69,7 @@ export function ComparisonPanel({ ranked, comparison, compareUfs, onToggleCompar
           </button>
         ))}
       </div>
-      <div className="mt-4 space-y-3">
+      <div className="mt-3 space-y-3">
         {comparison.length < 2 ? (
           <div className="surface-strong rounded-[24px] p-4 text-sm text-[var(--muted)]">
             Selecione pelo menos 2 territorios para comparar gargalos e sinais de decisao.
