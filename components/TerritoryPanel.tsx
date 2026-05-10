@@ -115,11 +115,11 @@ export function TerritoryPanel({
       <div className="mt-5 grid gap-4 md:grid-cols-2">
         <div className="rounded-[24px] border border-[rgba(15,118,110,0.16)] bg-[rgba(15,118,110,0.05)] p-4">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--teal)]">Dimensao dominante</p>
-          <div className="mt-2 flex items-center justify-between">
-            <span className="text-base font-semibold capitalize text-[var(--navy)]">
+          <div className="mt-2">
+            <span className="block text-base font-semibold capitalize text-[var(--navy)]">
               {readableDimension(dominantDimension[0] as keyof Weights)}
             </span>
-            <span className="text-2xl font-semibold text-[var(--navy)]">{dominantDimension[1]}</span>
+            <span className="mt-1 block text-2xl font-semibold text-[var(--navy)]">{dominantDimension[1]}</span>
           </div>
         </div>
         <div className="rounded-[24px] border border-[rgba(19,53,75,0.12)] bg-[rgba(19,53,75,0.04)] p-4">
