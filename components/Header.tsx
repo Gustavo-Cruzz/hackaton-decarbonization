@@ -25,7 +25,7 @@ export function Header({
 }: HeaderProps) {
   return (
     <header className="glass shadow-panel rounded-[30px] px-6 py-5">
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.45fr)_minmax(320px,420px)] xl:items-center">
         <div className="space-y-3">
           <div className="inline-flex items-center rounded-full border border-[rgba(15,118,110,0.14)] bg-[rgba(255,255,255,0.74)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--teal)]">
             PID MVP
@@ -47,12 +47,10 @@ export function Header({
             >
               Pitch rapido: Investidor + Hidrogenio verde + Bahia
             </button>
-            <div className="rounded-full border border-[var(--border)] bg-white/78 px-4 py-2 text-sm text-[var(--muted)]">
-              Use este atalho para entrar no fluxo principal da apresentacao.
-            </div>
           </div>
         </div>
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+          <div className="grid gap-3 sm:grid-cols-2">
           <label className="surface-strong rounded-2xl p-3">
             <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">
               Perfil
@@ -87,6 +85,7 @@ export function Header({
               ))}
             </select>
           </label>
+          </div>
           <button
             type="button"
             className="rounded-2xl bg-[linear-gradient(135deg,var(--navy),#1f5f73)] px-4 py-3 text-sm font-semibold text-white transition hover:opacity-92"

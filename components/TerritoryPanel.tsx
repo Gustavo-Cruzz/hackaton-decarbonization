@@ -152,46 +152,56 @@ export function TerritoryPanel({
         })}
       </div>
 
-      <div className="mt-5 rounded-[24px] border border-[var(--border)] bg-white/75 p-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--navy)]">Composicao de ativos energeticos</p>
-        <div className="mt-3 space-y-2">
-          {compositionEntries.map((entry) => (
-            <div key={entry.label}>
-              <div className="mb-1 flex items-center justify-between text-sm">
-                <span>{entry.label}</span>
-                <span className="font-semibold">{formatInt(entry.value)}</span>
-              </div>
-              <div className="h-2.5 rounded-full bg-slate-200">
-                <div className="h-2.5 rounded-full" style={{ width: `${Math.round((entry.value / compositionTotal) * 100)}%`, backgroundColor: entry.color }} />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-5 grid gap-4 md:grid-cols-2">
-        <div>
-          <h4 className="text-sm font-semibold text-[var(--navy)]">Forcas</h4>
-          <ul className="mt-2 space-y-2 text-sm text-[var(--muted)]">
-            {active.strengths.map((item) => (
-              <li key={item}>• {item}</li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <h4 className="text-sm font-semibold text-[var(--navy)]">Gargalos</h4>
-          <ul className="mt-2 space-y-2 text-sm text-[var(--muted)]">
-            {active.bottlenecks.map((item) => (
-              <li key={item}>• {item}</li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
       <div className="mt-5 rounded-[24px] bg-[rgba(15,118,110,0.08)] p-4">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--teal)]">Recomendacao</p>
         <p className="mt-2 text-base text-[var(--foreground)]">{active.recommendations[0]}</p>
       </div>
+
+      <details className="mt-5 rounded-[24px] border border-[var(--border)] bg-white/75 p-4">
+        <summary className="cursor-pointer text-xs font-semibold uppercase tracking-[0.18em] text-[var(--navy)]">
+          Abrir detalhamento territorial
+        </summary>
+        <div className="mt-4 space-y-5">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--navy)]">Composicao de ativos energeticos</p>
+            <div className="mt-3 space-y-2">
+              {compositionEntries.map((entry) => (
+                <div key={entry.label}>
+                  <div className="mb-1 flex items-center justify-between text-sm">
+                    <span>{entry.label}</span>
+                    <span className="font-semibold">{formatInt(entry.value)}</span>
+                  </div>
+                  <div className="h-2.5 rounded-full bg-slate-200">
+                    <div
+                      className="h-2.5 rounded-full"
+                      style={{ width: `${Math.round((entry.value / compositionTotal) * 100)}%`, backgroundColor: entry.color }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <h4 className="text-sm font-semibold text-[var(--navy)]">Forcas</h4>
+              <ul className="mt-2 space-y-2 text-sm text-[var(--muted)]">
+                {active.strengths.map((item) => (
+                  <li key={item}>• {item}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold text-[var(--navy)]">Gargalos</h4>
+              <ul className="mt-2 space-y-2 text-sm text-[var(--muted)]">
+                {active.bottlenecks.map((item) => (
+                  <li key={item}>• {item}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </details>
 
       {!isMunicipal && selectedState.scoreSources ? (
         <details className="mt-5 rounded-[24px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">

@@ -195,7 +195,7 @@ export default function LeafletMapCanvas({
     <MapContainer
       bounds={BRAZIL_BOUNDS}
       scrollWheelZoom
-      className="h-[520px] w-full rounded-[24px]"
+      className="h-[560px] w-full rounded-[24px] xl:h-[720px]"
       zoomControl={false}
     >
       <MapViewportController mapLevel={mapLevel} selectedUf={selectedUf} selectedMunicipality={selectedMunicipality} />
