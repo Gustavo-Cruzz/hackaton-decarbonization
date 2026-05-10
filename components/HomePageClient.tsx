@@ -8,7 +8,6 @@ import { territories } from "@/data/territories";
 import { ChatbotPanel } from "@/components/ChatbotPanel";
 import { ComparisonPanel } from "@/components/ComparisonPanel";
 import { CustomIndexBuilder } from "@/components/CustomIndexBuilder";
-import { DataDisclaimer } from "@/components/DataDisclaimer";
 import { Header } from "@/components/Header";
 import { MapView } from "@/components/MapView";
 import { PowerBiPanel } from "@/components/PowerBiPanel";
@@ -567,7 +566,6 @@ export default function HomePageClient() {
                   onAskChat={handleAskTerritoryChat}
                 />
                 <ProfileInsights profile={currentProfileView} onAskSuggestedQuestion={(question) => void submitChat(question)} />
-                <DataDisclaimer />
               </div>
             </section>
           </ClientSectionBoundary>
