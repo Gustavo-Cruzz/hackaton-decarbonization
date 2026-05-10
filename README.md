@@ -2,70 +2,70 @@
 
 ## Visão geral
 
-O PID MVP é um MVP de pitch para uma plataforma territorial de transição energética e descarbonização industrial no Brasil.
+O `PID MVP` é um MVP de pitch para uma plataforma territorial de transição energética e descarbonização industrial no Brasil.
 
-A plataforma combina mapa, IMTE, rankings, análises personalizadas, perfis de usuário e chatbot contextual para transformar informação territorial em decisão.
+Hoje a experiência principal combina:
 
-Na versão atual, o MVP usa uma base híbrida:
+- onboarding inteligente por perfil;
+- `Mapa interativo com bot` com `react-leaflet`;
+- `IMTE` híbrido com ranking, comparação e editor de pesos;
+- chatbot contextual com fallback `Gemini -> engine local`;
+- experiência paralela `Projetos ANP e ANEEL` via embed de `Power BI`.
 
-- `ANEEL SIGA` para usinas, fontes e potência instalada;
-- `IBGE` para estados, malha oficial por UF, população e indicadores econômicos;
-- sinais curados temporários para `logística` e parte de `infraestrutura`.
+O produto não é um sistema de produção regulatória. Ele é uma experiência de demonstração para exploração territorial, narrativa de pitch e validação de UX/produto.
 
-## Proposta de valor
+## Estado atual do produto
 
-O MVP demonstra como governos, investidores, engenheiros e pesquisadores podem identificar territórios com maior maturidade para projetos de transição energética e descarbonização industrial no Brasil.
+Funcionalidades já entregues:
 
-A plataforma não é apenas um mapa com camadas: ela funciona como um copiloto de decisão territorial.
+- [x] onboarding multi-etapas com perfis `Empresarial`, `Governamental` e `Pesquisador / Acadêmico`
+- [x] mapa geoespacial com `react-leaflet`
+- [x] basemap online com fallback local
+- [x] drill-down `Brasil -> UF -> município`
+- [x] chunk municipal demonstrativo local da `Bahia`
+- [x] painel territorial com `IMTE`, dimensões, forças, gargalos e recomendação
+- [x] ranking estadual e comparação entre territórios
+- [x] índice personalizável próximo do mapa
+- [x] chatbot flutuante com histórico simples de conversa
+- [x] URL compartilhável da visão atual
+- [x] download JSON do território selecionado
+- [x] embed `Power BI` na mesma aplicação
+- [x] fallback local do chat quando `Gemini` não responde
+- [x] testes unitários e E2E
 
-## Funcionalidades implementadas
+Ainda não existe:
 
-- [x] Mapa interativo do Brasil com malha oficial simplificada por UF
-- [x] Seleção de estados
-- [x] Painel IMTE
-- [x] Ranking por maturidade
-- [x] Comparação entre estados
-- [x] Índices customizáveis por objetivo
-- [x] Perfis de usuário
-- [x] Chatbot contextual com dados locais
-- [x] Base híbrida local com ANEEL SIGA, IBGE e sinais curados temporários
-- [x] Testes unitários e E2E
-- [ ] Geometrias reais em GeoJSON
-- [ ] Dados oficiais em tempo real em runtime
-- [ ] Banco geoespacial
-- [ ] Persistência backend de análises
-- [ ] LLM conectada em produção
+- [ ] cobertura municipal nacional gerada pelo pipeline
+- [ ] dados em tempo real no runtime
+- [ ] banco geoespacial
+- [ ] persistência backend de análises ou conversas
+- [ ] metodologia oficial de `IMTE` municipal
 
-Funcionalidades atuais em mais detalhe:
+## Fluxo principal
 
-- mapa com 27 UFs processadas a partir da malha oficial do IBGE;
-- fluxo de pitch validado com `Bahia`, `Ceará`, `Espírito Santo`, `Minas Gerais`, `São Paulo`, `Pernambuco`, `Rio de Janeiro`, `Rio Grande do Sul`, `Pará` e `Goiás`;
-- seleção de território por clique e destaque visual do estado ativo;
-- camadas ligáveis/desligáveis para `solar`, `eólica`, `biomassa`, `portos`, `indústrias`, `hubs de descarbonização` e `IMTE`;
-- painel territorial com nota IMTE, classificação, dimensões, forças, gargalos, recomendação e resumo `Por que este território agora`;
-- ranking recalculado por objetivo e pesos ativos, com destaque de `Top 3`;
-- comparação entre até 3 estados com diferenças em IMTE, forças e gargalos;
-- objetivos de análise: `Hidrogênio verde`, `SAF`, `Biometano`, `Indústria de baixo carbono` e `Política pública`;
-- perfis `Gestor público`, `Investidor`, `Engenheiro` e `Pesquisador`, alterando linguagem, insights e perguntas sugeridas;
-- chatbot usando dados locais do MVP, estado selecionado, perfil, objetivo e ranking atual;
-- persistência de estado da demonstração com `localStorage`.
+1. O usuário entra no onboarding e escolhe seu perfil.
+2. A aplicação abre no modo `Mapa interativo com bot`.
+3. O usuário navega entre `Brasil`, `UF` e, quando disponível, `município`.
+4. O painel territorial e o ranking refletem objetivo, pesos e tema do mapa.
+5. O editor de `IMTE` recalcula a leitura em tempo real.
+6. O chatbot flutuante responde com base no território em foco, objetivo, layers ativas e contexto do onboarding.
+7. O usuário pode alternar para `Projetos ANP e ANEEL` para abrir o `Power BI` embutido.
 
-## Fluxo de demonstração para pitch
+## Perfis e personalização
 
-1. Abra a aplicação.
-2. Selecione o perfil `Investidor`.
-3. Escolha o objetivo `Hidrogênio verde`.
-4. Clique na `Bahia`.
-5. Observe o IMTE, forças, gargalos e recomendação.
-6. Compare `Bahia`, `Ceará` e `Espírito Santo`.
-7. Ajuste os pesos do índice personalizado.
-8. Veja o ranking recalculado.
-9. Abra o chatbot.
-10. Pergunte: `Qual estado é melhor para hidrogênio verde?`
+O onboarding usa três perfis principais de UX:
 
-Atalho disponível na UI:
+- `Empresarial`
+- `Governamental`
+- `Pesquisador / Acadêmico`
 
-- `Pitch rapido: Investidor + Hidrogenio verde + Bahia`
+Internamente, o motor atual ainda mapeia esses perfis para a taxonomia legada do ranking/chat:
+
+- `Empresarial -> investidor`
+- `Governamental -> gestor-publico`
+- `Pesquisador / Acadêmico -> pesquisador`
+
+Esse mapeamento é um detalhe de compatibilidade interna. A interface principal do produto deve ser lida a partir da taxonomia nova do onboarding.
 
 ## Stack
 
@@ -73,6 +73,7 @@ Atalho disponível na UI:
 - `React 19`
 - `TypeScript`
 - `Tailwind CSS 4`
+- `react-leaflet`
 - `@google/genai`
 - `Vitest`
 - `Playwright`
@@ -89,7 +90,7 @@ Abra `http://localhost:3000`.
 
 ## Configuração do Gemini
 
-O chat pode usar o Gemini no backend para gerar respostas reais, com fallback automático para a engine local quando a chave não estiver configurada ou a API falhar.
+O chat pode usar `Gemini` no backend para gerar respostas reais, com fallback automático para a engine local quando a chave não estiver configurada ou a API falhar.
 
 Crie um arquivo `.env.local` na raiz do projeto com:
 
@@ -98,7 +99,46 @@ GEMINI_API_KEY=sua_chave_aqui
 GEMINI_MODEL=gemini-2.5-flash
 ```
 
-O arquivo [.env.example](/home/gust/hacka/.env.example) mostra esse formato.
+O arquivo `.env.example` mostra esse formato.
+
+## Dados e metodologia
+
+O MVP usa uma base híbrida local. As fontes centrais hoje são:
+
+- `ANEEL SIGA` para ativos de geração e capacidade instalada;
+- `IBGE Localidades` para estados e regiões;
+- `IBGE Malhas v3` para geometrias estaduais e municipais simplificadas;
+- `IBGE` para população, área e sinais econômicos usados no pipeline atual;
+- sinais curados temporários para `logística` e parte de `infraestrutura`;
+- proxy municipal demonstrativo para o chunk local da `Bahia`.
+
+Documentação recomendada:
+
+- [docs/funcionalidades-atuais.md](docs/funcionalidades-atuais.md)
+- [docs/imte-metodologia-v2.md](docs/imte-metodologia-v2.md)
+- [docs/bases-de-dados.md](docs/bases-de-dados.md)
+
+Arquivos-chave de dados:
+
+```txt
+data/raw/aneel/siga-empreendimentos-geracao.json
+data/raw/ibge/estados.json
+data/raw/ibge/estados-malha.geojson.json
+data/raw/ibge/populacao-estados.json
+data/raw/ibge/pib-industria-estados.json
+data/raw/curated/state-signals.json
+data/processed/territories-official.json
+data/processed/municipalities/BA.json
+```
+
+## Limitações metodológicas
+
+- o score estadual é `híbrido`, não regulatório;
+- `logística` ainda depende de sinais curados temporários;
+- parte de `infraestrutura` ainda depende de sinal curado;
+- o drill-down municipal atual é `demonstrativo`, não oficial;
+- o chunk municipal versionado hoje é local e restrito à `Bahia`;
+- o chatbot responde com base no dataset local do MVP e não substitui análise técnica.
 
 ## Testes
 
@@ -113,86 +153,20 @@ npm run build
 
 Cobertura atual inclui:
 
-- cálculo do IMTE;
-- ranking e comparação;
-- recálculo com pesos customizados;
-- engine básica do chatbot;
-- testes de persistência do estado da demo;
-- teste E2E do fluxo principal de pitch.
+- cálculo do `IMTE`;
+- ranking, comparação e pesos customizados;
+- estado persistido da demo;
+- contratos principais das rotas `/api`;
+- fluxo E2E do onboarding, mapa, chat e painéis analíticos.
 
 ## Estrutura do projeto
 
 ```txt
 app/         UI e rotas internas /api
 components/  blocos visuais da experiência
-data/        objetivos, perfis, snapshots oficiais e dataset processado
-lib/         cálculo IMTE, ranking, chatbot e estado da demo
+data/        objetivos, perfis, sinais curados, snapshots e datasets processados
+docs/        documentação de produto, metodologia e dados
+lib/         cálculo IMTE, ranking, chatbot, onboarding e estado da demo
 scripts/     pipeline offline de ingestão ANEEL/IBGE
 tests/       testes unitários, de contrato e E2E
-docs/        documentação de apoio
 ```
-
-Documentos úteis:
-
-- `docs/funcionalidades-atuais.md`
-- `docs/imte-metodologia-v2.md`
-
-## Dados demonstrativos
-
-Os dados deste MVP combinam snapshots oficiais e sinais curados temporários. Eles servem para validação de produto, storytelling e demonstração. Eles não devem ser usados para tomada de decisão real sem validação metodológica complementar.
-
-Os dados estão organizados principalmente em:
-
-```txt
-data/raw/
-data/processed/
-siga-empreendimentos-geracao.json
-```
-
-Modelo atual de IMTE:
-
-```txt
-IMTE base
-30% Energia limpa
-25% Infraestrutura
-20% Base industrial
-15% Logística
-10% Socioambiental
-```
-
-Observação:
-
-- o MVP usa essa fórmula-base como default;
-- objetivos específicos como `Hidrogênio verde`, `SAF` e `Biometano` aplicam pesos próprios para recalcular o ranking conforme o caso de uso;
-- `energia limpa`, `indústria`, `mapa` e parte da leitura socioeconômica já usam base oficial;
-- `logística` e parte de `infraestrutura` continuam em modo híbrido temporário.
-
-Proveniência por dimensão no `IMTE híbrido v2.1`:
-
-- `Energia limpa`: oficial, derivada de capacidade renovável e diversidade de fontes do `ANEEL SIGA`.
-- `Infraestrutura`: híbrida, combinando sinais curados temporários com escala de capacidade instalada.
-- `Base industrial`: híbrida, combinando `IBGE` com intensidade industrial complementar curada.
-- `Logística`: curada temporariamente por `UF`.
-- `Socioambiental`: derivada de proxies estaduais com `IBGE` + participação renovável.
-
-## Limitações do MVP
-
-- Não usa atualização automática em tempo real.
-- Não possui banco geoespacial.
-- Não possui autenticação.
-- Não possui persistência de análises em backend.
-- Não possui ingestão automática de APIs externas.
-- O chatbot usa dados locais/híbridos e não substitui análise técnica.
-- O mapa usa malha oficial simplificada por UF, sem drill-down municipal.
-- Logística e parte da infraestrutura ainda dependem de sinais curados temporários.
-
-## Próximos passos para produção
-
-- Integrar dados oficiais do `IBGE`, `ANEEL` e bases ambientais.
-- Evoluir para geometrias e camadas geoespaciais reais.
-- Substituir sinais curados de logística/infraestrutura por fontes oficiais.
-- Adicionar persistência.
-- Conectar LLM real com retrieval controlado.
-- Criar versionamento de metodologia IMTE.
-- Adicionar exportação de relatórios.
-- Preparar arquitetura de produção.

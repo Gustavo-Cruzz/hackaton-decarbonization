@@ -4,252 +4,213 @@
 
 O `PID MVP` é uma aplicação de pitch para demonstrar uma experiência de decisão territorial para transição energética e descarbonização industrial no Brasil.
 
-O produto combina:
+Na interface atual, o produto combina:
 
-- mapa territorial por `UF`;
-- `IMTE` com metodologia híbrida;
-- ranking e comparação entre estados;
-- objetivos com pesos customizáveis;
-- perfis de usuário;
-- chatbot contextualizado pelos dados locais do MVP.
+- onboarding inteligente por perfil;
+- modo principal `Mapa interativo com bot`;
+- experiência alternativa `Projetos ANP e ANEEL` via `Power BI`;
+- `IMTE` híbrido estadual;
+- drill-down municipal demonstrativo;
+- chatbot flutuante com histórico simples da conversa.
 
-Na versão atual, o MVP não opera mais só com dados simulados. Ele usa uma base híbrida:
+O produto trabalha com dados locais processados e não depende de ingestão em runtime para funcionar.
 
-- `ANEEL SIGA` para usinas, fontes e potência instalada;
-- `IBGE` para malha oficial por `UF`, população e indicadores econômicos;
-- sinais curados temporários para `logística`, `portos`, `hubs` e parte de `infraestrutura`.
+## 2. Experiência principal
 
-## 2. Funcionalidades visíveis
+### 2.1. Onboarding
 
-### 2.1. Mapa territorial
+Antes de entrar na aplicação principal, o usuário passa por um onboarding multi-etapas com:
 
-O mapa principal:
+- identificação básica;
+- classificação como pessoa física ou jurídica;
+- escolha de perfil principal:
+  - `Empresarial`
+  - `Governamental`
+  - `Pesquisador / Acadêmico`
+- perguntas condicionais por perfil;
+- personalização final por temas e nível de conhecimento.
 
-- renderiza as `27 UFs`;
-- usa geometria oficial simplificada do `IBGE`;
-- permite clique por estado;
-- destaca visualmente o território selecionado;
-- sincroniza seleção com painel, ranking e comparação.
+O onboarding define o contexto inicial do app e também alimenta o contexto enviado ao chatbot.
 
-Camadas disponíveis:
+### 2.2. Header e modos de experiência
 
-- `solar`
-- `eólica`
-- `biomassa`
-- `portos`
-- `indústrias`
-- `hubs`
-- `IMTE`
+Após o onboarding, o topo da aplicação mostra duas experiências:
 
-### 2.2. Painel territorial
+- `Mapa interativo com bot`
+- `Projetos ANP e ANEEL`
 
-Ao selecionar um estado, o painel lateral exibe:
+O header atual também mantém:
 
-- nome do território e região;
-- `IMTE` geral;
-- classificação de maturidade;
+- objetivo analítico ativo;
+- CTA de pitch rápido;
+- indicação do perfil ativo.
+
+O seletor de perfil não fica mais no header. O perfil vem do onboarding.
+
+### 2.3. Mapa principal
+
+O modo `Mapa interativo com bot` usa `react-leaflet` e hoje oferece:
+
+- visão nacional;
+- foco por `UF`;
+- drill-down municipal quando houver chunk local disponível;
+- basemap online por padrão;
+- fallback local quando o basemap falha;
+- tema ativo, layers ligáveis/desligáveis, legenda dinâmica e opacidade;
+- reset de visão, compartilhamento por URL e download JSON do território.
+
+O mapa sincroniza a seleção com:
+
+- painel territorial;
+- ranking;
+- comparação;
+- chatbot.
+
+### 2.4. Drill-down municipal
+
+O drill-down atual é `demonstrativo`.
+
+Estado atual:
+
+- existe suporte de produto e de UI para `Brasil -> UF -> município`;
+- a aplicação faz carga sob demanda via `/api/territories/[uf]?level=municipal`;
+- hoje há chunk local versionado para `BA`;
+- a leitura municipal usa `IMTE proxy`, não score oficial;
+- o app volta ao nível estadual quando o chunk municipal não está disponível.
+
+### 2.5. Painel territorial
+
+O painel lateral mostra, conforme o recorte ativo:
+
+- nome do território;
+- tipo territorial;
+- `IMTE` ou `IMTE proxy`;
+- classificação;
+- melhor sinal e principal restrição;
+- explicação do recorte;
+- dimensão dominante;
+- posição no ranking;
 - barras por dimensão;
-- forças;
-- gargalos;
 - recomendação principal;
-- resumo `Por que este território agora`;
-- base usada no recorte atual;
-- bloco `Como o IMTE foi montado`.
+- detalhamento recolhível de ativos, forças e gargalos;
+- bloco metodológico quando o território é estadual.
 
-### 2.3. IMTE
+### 2.6. Editor de IMTE
 
-O `IMTE` continua operando de `0 a 100` com fórmula-base:
+O `Indice personalizavel` hoje fica próximo do mapa e permite:
 
-```txt
-30% Energia limpa
-25% Infraestrutura
-20% Base industrial
-15% Logística
-10% Socioambiental
-```
+- ler o objetivo ativo;
+- ver dimensão dominante e segundo peso;
+- ajustar pesos por slider;
+- restaurar pesos padrão do objetivo;
+- recalcular ranking e leitura territorial em tempo real.
 
-Objetivos específicos podem recalcular o ranking com pesos próprios.
+### 2.7. Ranking e comparação
 
-Estado metodológico atual:
+O produto permite:
 
-- `energia limpa`: oficial;
-- `infraestrutura`: híbrida;
-- `base industrial`: híbrida;
-- `logística`: curada temporariamente;
-- `socioambiental`: derivada.
+- ranking estadual por `IMTE`;
+- destaque de `Top 3`;
+- clique no ranking para focar o território no mapa;
+- comparação entre até `3` estados;
+- leitura lado a lado de `IMTE`, forças e gargalos.
 
-### 2.4. Ranking e comparação
+Esses blocos ficam em painéis secundários recolhíveis abaixo da área principal.
 
-O usuário consegue:
+### 2.8. Chatbot flutuante
 
-- ver ranking territorial por `IMTE`;
-- recalcular ranking por objetivo ou pesos ativos;
-- destacar `Top 3`;
-- clicar no ranking para navegar para o estado;
-- comparar até `3 estados`;
-- ver diferenças de `IMTE`, forças e gargalos.
+O chatbot atual:
 
-### 2.5. Índice personalizável
+- abre por botão flutuante;
+- aparece em um drawer sobreposto à interface;
+- mantém histórico simples da sessão;
+- recebe contexto de:
+  - território em foco,
+  - nível territorial,
+  - objetivo,
+  - perfil,
+  - layers ativas,
+  - onboarding.
 
-O MVP permite:
+O backend tenta `Gemini` primeiro e cai para a engine local quando a API falha ou não está configurada.
 
-- escolher objetivo;
-- carregar pesos padrão;
-- editar pesos por dimensão;
-- restaurar pesos do objetivo;
-- recalcular o ranking imediatamente.
+### 2.9. Power BI embutido
 
-Objetivos atuais:
+O modo `Projetos ANP e ANEEL` renderiza um `iframe` com `Power BI` dentro da mesma aplicação.
 
-- `Hidrogênio verde`
-- `SAF`
-- `Biometano`
-- `Indústria de baixo carbono`
-- `Política pública`
+Esse painel:
 
-### 2.6. Perfis de usuário
+- é uma segunda experiência da mesma página;
+- não substitui o dataset local processado do mapa;
+- serve como exploração complementar de projetos.
 
-Perfis implementados:
+## 3. Persistência e contratos do app
 
-- `Gestor público`
-- `Investidor`
-- `Engenheiro`
-- `Pesquisador`
+O estado principal da demo é salvo em `localStorage`.
 
-Cada perfil altera:
+Hoje ele inclui, entre outros:
 
-- linguagem do resumo e da recomendação;
-- perguntas sugeridas para o chatbot;
-- objetivo sugerido;
-- pesos padrão complementares;
-- cards de insight.
-
-### 2.7. Chatbot contextual
-
-O chatbot responde usando:
-
-- `estado selecionado`;
-- `perfil atual`;
-- `objetivo atual`;
-- `pesos ativos`;
-- `ranking recalculado`;
-- dataset local híbrido.
-
-As respostas incluem:
-
-- resposta direta;
-- critérios usados;
-- recomendação;
-- ressalva do MVP.
-
-### 2.8. Persistência da demo
-
-O estado da demonstração é salvo em `localStorage`, incluindo:
-
-- perfil;
+- perfil interno compatível com o motor atual;
+- rótulo do perfil ativo;
 - objetivo;
 - pesos;
-- estado selecionado;
-- estados comparados;
-- camadas ativas;
-- abertura do chatbot;
-- última pergunta.
+- experiência selecionada (`map` ou `powerbi`);
+- `UF` selecionada;
+- nível territorial;
+- município selecionado, quando houver;
+- layers ativas;
+- opacidade;
+- abertura do chat;
+- última pergunta;
+- respostas do onboarding.
 
-### 2.9. Disclaimer
+Rotas internas relevantes:
 
-O MVP mostra aviso explícito de que:
-
-- a base é híbrida;
-- há sinais curados temporários;
-- a leitura serve para pitch e exploração comparativa;
-- não deve ser usada para decisão final sem validação complementar.
-
-## 3. Sustentação técnica
-
-Stack atual:
-
-- `Next.js 15`
-- `React 19`
-- `TypeScript`
-- `Tailwind CSS 4`
-- `Vitest`
-- `Playwright`
-
-Organização principal:
-
-- `app/`: UI e rotas internas `/api`;
-- `components/`: blocos da tela principal;
-- `data/raw/`: snapshots oficiais e curados versionados;
-- `data/processed/`: dataset territorial processado;
-- `lib/`: IMTE, ranking, chatbot e estado da demo;
-- `scripts/`: pipeline offline de ingestão;
-- `tests/`: testes unitários, de contrato e E2E.
-
-## 4. APIs e contratos atuais
-
-Rotas internas disponíveis:
-
-- `GET /api/territories`
-- `GET /api/territories/:uf`
+- `GET /api/territories/[uf]`
+- `GET /api/territories/[uf]?level=municipal`
 - `POST /api/ranking`
 - `POST /api/compare`
 - `POST /api/chat`
 
-Contratos relevantes:
+## 4. Dados usados na experiência
 
-- `TerritoryRecord`
-- `RankedTerritory`
-- `ComparisonEntry`
-- `ChatRequest`
-- `ChatResponse`
-- `DemoState`
+O produto usa uma base híbrida local:
 
-O `TerritoryRecord` atual já inclui:
+- `ANEEL SIGA`
+- `IBGE`
+- sinais curados temporários
+- proxy municipal demonstrativo
 
-- `scores`;
-- `assets`;
-- `geometry`;
-- `metrics`;
-- `sourceMeta`;
-- `scoreSources`.
+Resumo funcional por camada:
 
-## 5. Evidências e testes
+- `Energia limpa`: oficial/derivada a partir de `ANEEL SIGA`;
+- `Infraestrutura`: híbrida;
+- `Base industrial`: híbrida;
+- `Logística`: curada temporariamente;
+- `Socioambiental`: derivada.
 
-Cobertura atual:
+Detalhamento completo das bases:
 
-- cálculo do `IMTE`;
-- ranking;
-- pesos customizados;
-- engine do chatbot;
-- persistência de estado;
-- contratos das rotas `/api`;
-- dataset oficial/híbrido;
-- fluxo E2E principal de pitch.
+- [bases-de-dados.md](bases-de-dados.md)
 
-Comandos de validação:
+Metodologia do IMTE:
 
-```bash
-npm run build:data
-npm run test:unit
-npm run test:e2e
-npm run build
-```
+- [imte-metodologia-v2.md](imte-metodologia-v2.md)
 
-## 6. Limitações atuais
+## 5. Limitações atuais
 
 Ainda não existe:
 
-- atualização automática em runtime;
+- cobertura municipal nacional gerada pelo pipeline;
+- atualização automática de fontes em runtime;
 - banco geoespacial;
 - autenticação;
-- persistência backend de análises;
-- ingestão automática de APIs externas;
-- drill-down municipal;
-- LLM de produção com retrieval controlado.
+- persistência backend de análises ou conversas;
+- metodologia oficial de `IMTE` municipal.
 
-Limitações metodológicas atuais:
+Limitações metodológicas ativas:
 
-- `logística` ainda é um score curado por `UF`;
-- parte de `infraestrutura` ainda depende de sinal curado;
-- a leitura socioambiental ainda usa proxies simplificados;
-- o MVP continua orientado a demonstração, não a decisão regulatória ou investimento real sem aprofundamento.
+- `logística` ainda depende de score curado por `UF`;
+- parte de `infraestrutura` ainda depende de sinais curados;
+- a leitura socioambiental usa proxies simplificados;
+- a camada municipal atual é demonstrativa e limitada ao chunk local disponível.
