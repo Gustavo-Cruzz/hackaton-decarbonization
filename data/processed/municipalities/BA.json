@@ -1,0 +1,383 @@
+{
+  "meta": {
+    "uf": "BA",
+    "state": "Bahia",
+    "coverage": "demo-subset",
+    "referenceDate": "2026-05-10",
+    "note": "Chunk demonstrativo local para pitch. O pipeline build:data pode substituir por cobertura municipal completa do IBGE."
+  },
+  "municipalities": [
+    {
+      "id": "2927408",
+      "name": "Salvador",
+      "uf": "BA",
+      "state": "Bahia",
+      "region": "Nordeste",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-38.65, -13.1], [-38.36, -13.1], [-38.36, -12.82], [-38.65, -12.82], [-38.65, -13.1]]]
+      },
+      "bbox": [-13.1, -38.65, -12.82, -38.36],
+      "centroid": [-12.9777, -38.5016],
+      "dataStatus": "demonstrative",
+      "imteProxy": 77,
+      "classification": "Alta",
+      "scoresProxy": {
+        "energiaLimpa": 75,
+        "infraestrutura": 82,
+        "industria": 79,
+        "logistica": 84,
+        "socioambiental": 67
+      },
+      "assetsProxy": {
+        "solar": 8,
+        "eolica": 2,
+        "biomassa": 1,
+        "portos": 1,
+        "industrias": 7,
+        "hubs": 1
+      },
+      "sourceMeta": {
+        "sourceType": "demonstrative",
+        "ibgeMunicipalityYear": "2025",
+        "ibgeGeometrySource": "IBGE malhas municipios v3",
+        "proxyMethod": "Proxy demonstrativo derivado do score estadual com ajustes locais simples de populacao, densidade e escala economica.",
+        "notes": [
+          "Nao representa metodologia oficial de IMTE municipal.",
+          "Serve apenas para navegacao geoespacial e narrativa de pitch."
+        ],
+        "referenceDate": "2026-05-10"
+      },
+      "metricsProxy": {
+        "population": 2417678,
+        "areaKm2": 693.5,
+        "populationDensity": 3486,
+        "economicScale": 92
+      },
+      "strengths": [
+        "Escala economica e institucional elevada no contexto baiano.",
+        "Conexao logistica com porto e servicos industriais."
+      ],
+      "bottlenecks": [
+        "Densidade urbana alta exige filtros locacionais adicionais.",
+        "Proxy municipal ainda simplificado para infraestrutura energetica."
+      ],
+      "recommendations": [
+        "Usar Salvador como ancora institucional e logistica na narrativa.",
+        "Detalhar o entorno metropolitano antes de decidir implantacao."
+      ],
+      "explanation": "Salvador herda a base estrutural da Bahia e recebe ajuste demonstrativo forte por escala economica e logistica.",
+      "rankInState": 1
+    },
+    {
+      "id": "2905701",
+      "name": "Camacari",
+      "uf": "BA",
+      "state": "Bahia",
+      "region": "Nordeste",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-38.48, -12.84], [-38.18, -12.84], [-38.18, -12.56], [-38.48, -12.56], [-38.48, -12.84]]]
+      },
+      "bbox": [-12.84, -38.48, -12.56, -38.18],
+      "centroid": [-12.6975, -38.326],
+      "dataStatus": "demonstrative",
+      "imteProxy": 76,
+      "classification": "Alta",
+      "scoresProxy": {
+        "energiaLimpa": 76,
+        "infraestrutura": 79,
+        "industria": 81,
+        "logistica": 78,
+        "socioambiental": 64
+      },
+      "assetsProxy": {
+        "solar": 7,
+        "eolica": 2,
+        "biomassa": 1,
+        "portos": 1,
+        "industrias": 8,
+        "hubs": 1
+      },
+      "sourceMeta": {
+        "sourceType": "demonstrative",
+        "ibgeMunicipalityYear": "2025",
+        "ibgeGeometrySource": "IBGE malhas municipios v3",
+        "proxyMethod": "Proxy demonstrativo derivado do score estadual com ajustes locais simples de populacao, densidade e escala economica.",
+        "notes": [
+          "Nao representa metodologia oficial de IMTE municipal.",
+          "Serve apenas para navegacao geoespacial e narrativa de pitch."
+        ],
+        "referenceDate": "2026-05-10"
+      },
+      "metricsProxy": {
+        "population": 299132,
+        "areaKm2": 784.7,
+        "populationDensity": 381,
+        "economicScale": 86
+      },
+      "strengths": [
+        "Base industrial relevante para cadeias de baixo carbono.",
+        "Proximidade com corredores logistico-portuarios."
+      ],
+      "bottlenecks": [
+        "Leitura municipal ainda depende do contexto logistico estadual.",
+        "Necessidade de validar disponibilidade energetica local."
+      ],
+      "recommendations": [
+        "Usar Camacari quando a tese exigir demanda industrial ancora.",
+        "Cruzar o proxy com dados locais de uso do solo e energia."
+      ],
+      "explanation": "Camacari aparece bem no proxy por combinar base industrial, conexao metropolitana e escala economica demonstrativa.",
+      "rankInState": 2
+    },
+    {
+      "id": "2910800",
+      "name": "Feira de Santana",
+      "uf": "BA",
+      "state": "Bahia",
+      "region": "Nordeste",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-39.15, -12.42], [-38.78, -12.42], [-38.78, -12.12], [-39.15, -12.12], [-39.15, -12.42]]]
+      },
+      "bbox": [-12.42, -39.15, -12.12, -38.78],
+      "centroid": [-12.2664, -38.9663],
+      "dataStatus": "demonstrative",
+      "imteProxy": 73,
+      "classification": "Alta",
+      "scoresProxy": {
+        "energiaLimpa": 74,
+        "infraestrutura": 75,
+        "industria": 73,
+        "logistica": 77,
+        "socioambiental": 66
+      },
+      "assetsProxy": {
+        "solar": 6,
+        "eolica": 2,
+        "biomassa": 1,
+        "portos": 0,
+        "industrias": 5,
+        "hubs": 1
+      },
+      "sourceMeta": {
+        "sourceType": "demonstrative",
+        "ibgeMunicipalityYear": "2025",
+        "ibgeGeometrySource": "IBGE malhas municipios v3",
+        "proxyMethod": "Proxy demonstrativo derivado do score estadual com ajustes locais simples de populacao, densidade e escala economica.",
+        "notes": [
+          "Nao representa metodologia oficial de IMTE municipal.",
+          "Serve apenas para navegacao geoespacial e narrativa de pitch."
+        ],
+        "referenceDate": "2026-05-10"
+      },
+      "metricsProxy": {
+        "population": 657948,
+        "areaKm2": 1304.4,
+        "populationDensity": 504,
+        "economicScale": 72
+      },
+      "strengths": [
+        "No logistico interno da Bahia com escala urbana relevante.",
+        "Boa leitura para distribuicao territorial de demanda."
+      ],
+      "bottlenecks": [
+        "Sem acesso portuario direto no recorte demonstrativo.",
+        "Proxy municipal nao inclui capacidade industrial detalhada."
+      ],
+      "recommendations": [
+        "Usar Feira de Santana para explicar interiorizacao de corredores.",
+        "Aprofundar a validacao de infraestrutura local antes de priorizar."
+      ],
+      "explanation": "Feira de Santana ganha tracao demonstrativa como no logistico e urbano do interior baiano.",
+      "rankInState": 3
+    },
+    {
+      "id": "2918407",
+      "name": "Juazeiro",
+      "uf": "BA",
+      "state": "Bahia",
+      "region": "Nordeste",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-40.72, -9.58], [-40.31, -9.58], [-40.31, -9.25], [-40.72, -9.25], [-40.72, -9.58]]]
+      },
+      "bbox": [-9.58, -40.72, -9.25, -40.31],
+      "centroid": [-9.4114, -40.5031],
+      "dataStatus": "demonstrative",
+      "imteProxy": 71,
+      "classification": "Alta",
+      "scoresProxy": {
+        "energiaLimpa": 78,
+        "infraestrutura": 68,
+        "industria": 66,
+        "logistica": 69,
+        "socioambiental": 71
+      },
+      "assetsProxy": {
+        "solar": 7,
+        "eolica": 3,
+        "biomassa": 2,
+        "portos": 0,
+        "industrias": 4,
+        "hubs": 0
+      },
+      "sourceMeta": {
+        "sourceType": "demonstrative",
+        "ibgeMunicipalityYear": "2025",
+        "ibgeGeometrySource": "IBGE malhas municipios v3",
+        "proxyMethod": "Proxy demonstrativo derivado do score estadual com ajustes locais simples de populacao, densidade e escala economica.",
+        "notes": [
+          "Nao representa metodologia oficial de IMTE municipal.",
+          "Serve apenas para navegacao geoespacial e narrativa de pitch."
+        ],
+        "referenceDate": "2026-05-10"
+      },
+      "metricsProxy": {
+        "population": 237821,
+        "areaKm2": 6500,
+        "populationDensity": 37,
+        "economicScale": 61
+      },
+      "strengths": [
+        "Proxy favorece disponibilidade territorial e leitura renovavel.",
+        "Narrativa forte para interiorizacao energetica."
+      ],
+      "bottlenecks": [
+        "Distancia dos corredores exportadores costeiros.",
+        "Necessidade de checagem local de infraestrutura de transmissao."
+      ],
+      "recommendations": [
+        "Usar Juazeiro para mostrar opcao interior com energia e area.",
+        "Conectar o caso a corredores interestaduais antes de escalar."
+      ],
+      "explanation": "Juazeiro ganha relevancia demonstrativa por densidade menor e sinal renovavel forte no interior.",
+      "rankInState": 4
+    },
+    {
+      "id": "2913606",
+      "name": "Ilheus",
+      "uf": "BA",
+      "state": "Bahia",
+      "region": "Nordeste",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-39.18, -14.95], [-38.9, -14.95], [-38.9, -14.64], [-39.18, -14.64], [-39.18, -14.95]]]
+      },
+      "bbox": [-14.95, -39.18, -14.64, -38.9],
+      "centroid": [-14.7936, -39.0469],
+      "dataStatus": "demonstrative",
+      "imteProxy": 69,
+      "classification": "Alta",
+      "scoresProxy": {
+        "energiaLimpa": 72,
+        "infraestrutura": 66,
+        "industria": 63,
+        "logistica": 74,
+        "socioambiental": 68
+      },
+      "assetsProxy": {
+        "solar": 4,
+        "eolica": 1,
+        "biomassa": 2,
+        "portos": 1,
+        "industrias": 3,
+        "hubs": 0
+      },
+      "sourceMeta": {
+        "sourceType": "demonstrative",
+        "ibgeMunicipalityYear": "2025",
+        "ibgeGeometrySource": "IBGE malhas municipios v3",
+        "proxyMethod": "Proxy demonstrativo derivado do score estadual com ajustes locais simples de populacao, densidade e escala economica.",
+        "notes": [
+          "Nao representa metodologia oficial de IMTE municipal.",
+          "Serve apenas para navegacao geoespacial e narrativa de pitch."
+        ],
+        "referenceDate": "2026-05-10"
+      },
+      "metricsProxy": {
+        "population": 178703,
+        "areaKm2": 1584.7,
+        "populationDensity": 113,
+        "economicScale": 56
+      },
+      "strengths": [
+        "Leitura logistica reforcada pela fachada litoranea.",
+        "Boa narrativa para agroindustria e biomassa."
+      ],
+      "bottlenecks": [
+        "Base industrial proxy menor que a faixa metropolitana.",
+        "Drill-down ainda nao detalha infraestrutura local fina."
+      ],
+      "recommendations": [
+        "Usar Ilheus para tese costeira com escala intermediaria.",
+        "Validar integracao porto-industrias em estudos posteriores."
+      ],
+      "explanation": "Ilheus entra como leitura costeira intermediaria, combinando logistica, biomassa e escala urbana moderada.",
+      "rankInState": 5
+    },
+    {
+      "id": "2903201",
+      "name": "Barreiras",
+      "uf": "BA",
+      "state": "Bahia",
+      "region": "Nordeste",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-45.14, -12.3], [-44.82, -12.3], [-44.82, -12.01], [-45.14, -12.01], [-45.14, -12.3]]]
+      },
+      "bbox": [-12.3, -45.14, -12.01, -44.82],
+      "centroid": [-12.1529, -44.99],
+      "dataStatus": "demonstrative",
+      "imteProxy": 68,
+      "classification": "Alta",
+      "scoresProxy": {
+        "energiaLimpa": 73,
+        "infraestrutura": 63,
+        "industria": 61,
+        "logistica": 64,
+        "socioambiental": 72
+      },
+      "assetsProxy": {
+        "solar": 5,
+        "eolica": 1,
+        "biomassa": 2,
+        "portos": 0,
+        "industrias": 3,
+        "hubs": 0
+      },
+      "sourceMeta": {
+        "sourceType": "demonstrative",
+        "ibgeMunicipalityYear": "2025",
+        "ibgeGeometrySource": "IBGE malhas municipios v3",
+        "proxyMethod": "Proxy demonstrativo derivado do score estadual com ajustes locais simples de populacao, densidade e escala economica.",
+        "notes": [
+          "Nao representa metodologia oficial de IMTE municipal.",
+          "Serve apenas para navegacao geoespacial e narrativa de pitch."
+        ],
+        "referenceDate": "2026-05-10"
+      },
+      "metricsProxy": {
+        "population": 167638,
+        "areaKm2": 7753,
+        "populationDensity": 22,
+        "economicScale": 54
+      },
+      "strengths": [
+        "Baixa densidade e leitura territorial ampla favorecem expansao.",
+        "Proxy conecta agroindustria e energia como narrativa do oeste baiano."
+      ],
+      "bottlenecks": [
+        "Distancia maior dos polos costeiros e exportadores.",
+        "Necessidade de validar conexoes de infraestrutura em campo."
+      ],
+      "recommendations": [
+        "Usar Barreiras para contrapor metropole e interior produtivo.",
+        "Aprofundar corredores logistico-energeticos antes de priorizar."
+      ],
+      "explanation": "Barreiras funciona como leitura demonstrativa de interior produtivo com disponibilidade territorial ampla.",
+      "rankInState": 6
+    }
+  ]
+}
