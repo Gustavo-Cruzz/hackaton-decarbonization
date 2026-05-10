@@ -28,7 +28,7 @@ describe("demo state helpers", () => {
     expect(state.selectedExperience).toBe("map");
     expect(state.hasChosenProfile).toBe(false);
     expect(state.compareUfs).toEqual(["BA", "CE", "ES"]);
-    expect(state.chatOpen).toBe(true);
+    expect(state.chatOpen).toBe(false);
   });
 
   it("loads default state when storage is unavailable or broken", () => {

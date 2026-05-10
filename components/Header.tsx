@@ -7,10 +7,8 @@ import { ExperienceMode, ObjectiveId } from "@/lib/types";
 interface HeaderProps {
   activeProfileLabel: string;
   objective: ObjectiveId;
-  chatOpen: boolean;
   selectedExperience: ExperienceMode;
   onObjectiveChange: (objective: ObjectiveId) => void;
-  onToggleChat: () => void;
   onApplyPitchFlow: () => void;
   onSelectExperience: (mode: ExperienceMode) => void;
 }
@@ -18,10 +16,8 @@ interface HeaderProps {
 export function Header({
   activeProfileLabel,
   objective,
-  chatOpen,
   selectedExperience,
   onObjectiveChange,
-  onToggleChat,
   onApplyPitchFlow,
   onSelectExperience
 }: HeaderProps) {
@@ -83,7 +79,7 @@ export function Header({
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+          <div className="grid gap-3 xl:grid-cols-1">
             <label className="surface-strong rounded-2xl p-3">
               <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">
                 Objetivo
@@ -101,13 +97,6 @@ export function Header({
                 ))}
               </select>
             </label>
-            <button
-              type="button"
-              className="rounded-2xl bg-[linear-gradient(135deg,var(--navy),#1f5f73)] px-4 py-3 text-sm font-semibold text-white transition hover:opacity-92"
-              onClick={onToggleChat}
-            >
-              {chatOpen ? "Ocultar chatbot" : "Abrir chatbot"}
-            </button>
           </div>
         </div>
       </div>

@@ -25,7 +25,7 @@ export function createDefaultDemoState(): DemoState {
     activeTheme: "indicadores",
     layerOpacity: 0.72,
     useBasemap: true,
-    chatOpen: true,
+    chatOpen: false,
     chatQuestion: DEFAULT_CHAT_QUESTION
   };
 }

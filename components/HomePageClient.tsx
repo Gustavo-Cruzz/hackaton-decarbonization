@@ -32,6 +32,7 @@ import { buildOnboardingContextSummary, buildOnboardingProfileView, defaultObjec
 import { compareTerritories, rankTerritories } from "@/lib/ranking";
 import { applySearchParamsToState, buildTerritoryDownloadPayload, demoStateToSearchParams } from "@/lib/share-state";
 import {
+  ChatHistoryEntry,
   ChatResponse,
   ChatUiState,
   LayerGroupKey,
@@ -110,9 +111,9 @@ function CollapsibleSection({
 
 export default function HomePageClient() {
   const [demoState, setDemoState] = useState(createDefaultDemoState);
-  const [chatResponse, setChatResponse] = useState<ChatResponse | null>(null);
   const [chatStatus, setChatStatus] = useState<ChatUiState>("idle");
   const [chatErrorMessage, setChatErrorMessage] = useState<string | null>(null);
+  const [chatHistory, setChatHistory] = useState<ChatHistoryEntry[]>([]);
   const [flashMessage, setFlashMessage] = useState<string | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
   const [municipalityCache, setMunicipalityCache] = useState<Record<string, MunicipalityRecord[]>>({});
@@ -146,7 +147,10 @@ export default function HomePageClient() {
     if (!isHydrated || !demoState.hasChosenProfile || demoState.selectedExperience !== "map") {
       return;
     }
-    void submitChat(demoState.chatQuestion || DEFAULT_CHAT_QUESTION);
+    void submitChat(demoState.chatQuestion || DEFAULT_CHAT_QUESTION, undefined, {
+      openDrawer: false,
+      addToHistory: false
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isHydrated, demoState.hasChosenProfile, demoState.selectedExperience]);
 
@@ -298,14 +302,18 @@ export default function HomePageClient() {
       chatOpen: true,
       chatQuestion: DEFAULT_CHAT_QUESTION
     });
-    void submitChat(DEFAULT_CHAT_QUESTION, {
-      profile,
-      objective,
-      selectedUf: "BA",
-      weights,
-      mapLevel: "state",
-      selectedMunicipalityId: undefined
-    });
+    void submitChat(
+      DEFAULT_CHAT_QUESTION,
+      {
+        profile,
+        objective,
+        selectedUf: "BA",
+        weights,
+        mapLevel: "state",
+        selectedMunicipalityId: undefined
+      },
+      { openDrawer: false, addToHistory: false }
+    );
   }
 
   async function submitChat(
@@ -318,11 +326,24 @@ export default function HomePageClient() {
       mapLevel: MapLevel;
       selectedMunicipalityId?: string;
       selectedMunicipalityName?: string;
-    }>
+    }>,
+    options?: {
+      openDrawer?: boolean;
+      addToHistory?: boolean;
+    }
   ) {
+    const shouldOpenDrawer = options?.openDrawer ?? true;
+    const shouldAddToHistory = options?.addToHistory ?? true;
+    const effectiveTerritorialContextLabel =
+      overrides?.mapLevel === "municipal" && overrides?.selectedMunicipalityName && (overrides?.selectedUf ?? demoState.selectedUf)
+        ? `${overrides.selectedMunicipalityName} (${overrides.selectedUf ?? demoState.selectedUf}) • nivel municipal • ${getEnabledLayerKeys(demoState.enabledLayers)
+            .map((key) => getLayerDefinition(key)?.label ?? key)
+            .join(", ")}`
+        : territorialContextLabel;
+
     setChatStatus("loading");
     setChatErrorMessage(null);
-    updateDemoState({ chatQuestion: question });
+    updateDemoState({ chatQuestion: question, chatOpen: shouldOpenDrawer ? true : demoState.chatOpen });
 
     try {
       const response = await fetch("/api/chat", {
@@ -354,12 +375,36 @@ export default function HomePageClient() {
         console.error("Invalid chat payload", data);
         throw new Error("invalid-chat-response");
       }
-      setChatResponse(data);
       setChatStatus("success");
+      if (shouldAddToHistory) {
+        setChatHistory((current) => [
+          ...current,
+          {
+            id: `${Date.now()}-${current.length + 1}`,
+            question,
+            status: "success",
+            response: data,
+            territorialContextLabel: effectiveTerritorialContextLabel
+          }
+        ]);
+      }
     } catch (error) {
       console.error("Chat client failure", error);
       setChatStatus("error");
-      setChatErrorMessage("Nao consegui consultar o chatbot agora. Tente novamente para continuar a demo.");
+      const nextErrorMessage = "Nao consegui consultar o chatbot agora. Tente novamente para continuar a demo.";
+      setChatErrorMessage(nextErrorMessage);
+      if (shouldAddToHistory) {
+        setChatHistory((current) => [
+          ...current,
+          {
+            id: `${Date.now()}-${current.length + 1}`,
+            question,
+            status: "error",
+            errorMessage: nextErrorMessage,
+            territorialContextLabel: effectiveTerritorialContextLabel
+          }
+        ]);
+      }
     }
   }
 
@@ -433,6 +478,15 @@ export default function HomePageClient() {
   }
 
   function handleSelectUf(selectedUf: string) {
+    if (selectedUf === demoState.selectedUf && demoState.mapLevel === "state") {
+      updateDemoState({
+        selectedUf,
+        mapLevel: "municipal",
+        selectedMunicipalityId: municipalityCache[selectedUf]?.[0]?.id ?? demoState.selectedMunicipalityId
+      });
+      return;
+    }
+
     updateDemoState({
       selectedUf,
       mapLevel: "state",
@@ -457,10 +511,8 @@ export default function HomePageClient() {
       <Header
         activeProfileLabel={demoState.activeProfileLabel}
         objective={demoState.objective}
-        chatOpen={demoState.chatOpen}
         selectedExperience={demoState.selectedExperience}
         onObjectiveChange={applyObjective}
-        onToggleChat={() => updateDemoState({ chatOpen: !demoState.chatOpen })}
         onApplyPitchFlow={applyPitchFlow}
         onSelectExperience={(selectedExperience) => updateDemoState({ selectedExperience })}
       />
@@ -504,16 +556,6 @@ export default function HomePageClient() {
                   isCompared={demoState.compareUfs.includes(selectedState.uf)}
                   onCompare={() => toggleCompare(selectedState.uf)}
                   onAskChat={handleAskTerritoryChat}
-                />
-                <ChatbotPanel
-                  isOpen={demoState.chatOpen}
-                  question={demoState.chatQuestion}
-                  status={chatStatus}
-                  response={chatResponse}
-                  errorMessage={chatErrorMessage}
-                  territorialContextLabel={territorialContextLabel}
-                  onQuestionChange={(chatQuestion) => updateDemoState({ chatQuestion })}
-                  onSubmit={() => void submitChat(demoState.chatQuestion)}
                 />
                 <ProfileInsights profile={currentProfileView} onAskSuggestedQuestion={(question) => void submitChat(question)} />
                 <DataDisclaimer />
@@ -571,6 +613,19 @@ export default function HomePageClient() {
           </ClientSectionBoundary>
         </>
       )}
+
+      <ChatbotPanel
+        isOpen={demoState.chatOpen}
+        question={demoState.chatQuestion}
+        status={chatStatus}
+        errorMessage={chatErrorMessage}
+        territorialContextLabel={territorialContextLabel}
+        history={chatHistory}
+        onQuestionChange={(chatQuestion) => updateDemoState({ chatQuestion })}
+        onSubmit={() => void submitChat(demoState.chatQuestion)}
+        onToggle={() => updateDemoState({ chatOpen: !demoState.chatOpen })}
+        onClose={() => updateDemoState({ chatOpen: false })}
+      />
     </main>
   );
 }

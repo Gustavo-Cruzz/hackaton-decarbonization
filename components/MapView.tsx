@@ -181,16 +181,6 @@ export function MapView({
                   >
                     UF ativa
                   </button>
-                  <button
-                    type="button"
-                    className={clsx(
-                      "rounded-full px-3 py-2 text-xs font-semibold transition",
-                      mapLevel === "municipal" ? "bg-[var(--navy)] text-white" : "bg-[rgba(19,53,75,0.08)] text-[var(--navy)]"
-                    )}
-                    onClick={() => onSetMapLevel("municipal")}
-                  >
-                    Ver municipios
-                  </button>
                 </div>
               </div>
 

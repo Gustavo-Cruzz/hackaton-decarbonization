@@ -255,6 +255,15 @@ export interface ChatResponse {
 
 export type ChatUiState = "idle" | "loading" | "success" | "error";
 
+export interface ChatHistoryEntry {
+  id: string;
+  question: string;
+  status: "success" | "error";
+  response?: ChatResponse;
+  errorMessage?: string;
+  territorialContextLabel?: string;
+}
+
 export interface DemoState {
   hasChosenProfile: boolean;
   profile: ProfileId;

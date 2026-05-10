@@ -60,6 +60,8 @@ describe("HomePageClient onboarding", () => {
     expect(await screen.findByLabelText("Objetivo")).toBeVisible();
     expect(screen.queryByLabelText("Perfil")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Mapa interativo com bot" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Ocultar chatbot" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Abrir chatbot" })).toBeVisible();
   });
 
   it("switches to the Power BI experience from the header", async () => {

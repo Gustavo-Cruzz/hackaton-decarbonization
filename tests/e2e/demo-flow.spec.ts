@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("critical pitch flow works end-to-end with municipal drill-down", async ({ page }) => {
+test("critical pitch flow works end-to-end", async ({ page }) => {
   await page.goto("/");
 
   await expect(page.getByText("Configure sua experiencia em quatro etapas")).toBeVisible();
@@ -32,10 +32,6 @@ test("critical pitch flow works end-to-end with municipal drill-down", async ({ 
   await expect(page.getByText("Legenda IMTE")).toBeVisible();
   await expect(page.getByText("Mapa analitico Brasil → UF → municipios")).toBeVisible();
 
-  await page.getByRole("button", { name: "Ver municipios" }).click();
-  await expect(page.getByRole("heading", { name: "Salvador" })).toBeVisible();
-  await expect(page.getByText("Municipio • BA • leitura demonstrativa")).toBeVisible();
-
   await page.getByRole("button", { name: /^Energia$/ }).click();
   await page.getByRole("button", { name: /Desligar camada Parques solares|Ligar camada Parques solares/ }).click();
   await page.getByRole("button", { name: /^Infraestrutura$/ }).click();
@@ -55,26 +51,24 @@ test("critical pitch flow works end-to-end with municipal drill-down", async ({ 
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Baixar JSON" }).click();
   const download = await downloadPromise;
-  expect(download.suggestedFilename()).toContain("2927408");
+  expect(download.suggestedFilename()).toContain("BA");
 
   await page.getByRole("button", { name: "Resetar visao" }).click();
   await expect(page.getByRole("heading", { name: "Bahia" })).toBeVisible();
-
-  await page.getByRole("button", { name: "Ver municipios" }).click();
-  await expect(page.getByRole("heading", { name: "Salvador" })).toBeVisible();
   await expect(page).toHaveURL(/selectedUf=BA/);
-  await expect(page).toHaveURL(/mapLevel=municipal/);
+  await expect(page).toHaveURL(/mapLevel=national/);
 
+  await page.getByRole("button", { name: "Abrir chatbot" }).click();
   const chatbotInput = page.getByLabel("Pergunta para o chatbot");
-  await chatbotInput.fill("O que esse municipio sugere?");
+  await chatbotInput.fill("O que esse estado sugere?");
   await page.getByRole("button", { name: /^Perguntar$/ }).click();
 
   await expect(page.getByText("Resposta direta")).toBeVisible();
-  await expect(page.getByText(/Salvador esta em leitura municipal demonstrativa/i)).toBeVisible();
+  await expect(page.getByText(/Bahia tem IMTE/i)).toBeVisible();
   await expect(page.getByText("Contexto territorial")).toBeVisible();
-  await expect(page.getByText(/Salvador \(BA\) em nivel municipal demonstrativo/i)).toBeVisible();
+  await expect(page.getByText(/Contexto atual: Bahia \(BA\)/i)).toBeVisible();
 
   await page.reload();
-  await expect(page).toHaveURL(/mapLevel=municipal/);
-  await expect(page.getByRole("heading", { name: "Salvador" })).toBeVisible();
+  await expect(page).toHaveURL(/selectedUf=BA/);
+  await expect(page.getByRole("heading", { name: "Bahia" })).toBeVisible();
 });
