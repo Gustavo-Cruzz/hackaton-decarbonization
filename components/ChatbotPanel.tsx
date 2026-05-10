@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { ChatResponse, ChatUiState } from "@/lib/types";
 
 interface ChatbotPanelProps {
@@ -23,11 +24,24 @@ export function ChatbotPanel({
   onQuestionChange,
   onSubmit
 }: ChatbotPanelProps) {
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
   if (!isOpen) {
     return null;
   }
 
   const isLoading = status === "loading";
+
+  useEffect(() => {
+    const element = textareaRef.current;
+    if (!element) {
+      return;
+    }
+
+    element.style.height = "0px";
+    const nextHeight = Math.min(element.scrollHeight, 220);
+    element.style.height = `${Math.max(nextHeight, 88)}px`;
+  }, [question]);
 
   return (
     <section className="rounded-[30px] border border-[rgba(242,111,99,0.24)] bg-[linear-gradient(160deg,rgba(255,255,255,0.96),rgba(255,240,236,0.92)_42%,rgba(228,246,241,0.94)_100%)] p-5 shadow-[0_28px_80px_rgba(22,56,77,0.16)]">
@@ -55,12 +69,20 @@ export function ChatbotPanel({
           Pergunta guiada
         </div>
         <div className="flex gap-2">
-          <input
+          <textarea
             aria-label="Pergunta para o chatbot"
-            className="w-full rounded-[22px] border border-[rgba(22,56,77,0.08)] bg-white px-4 py-3.5 text-[15px] outline-none transition placeholder:text-[rgba(97,120,112,0.9)] focus:border-[rgba(242,111,99,0.45)] focus:ring-4 focus:ring-[rgba(242,111,99,0.12)]"
+            ref={textareaRef}
+            rows={3}
+            className="w-full resize-none overflow-y-auto rounded-[22px] border border-[rgba(22,56,77,0.08)] bg-white px-4 py-3.5 text-[15px] outline-none transition placeholder:text-[rgba(97,120,112,0.9)] focus:border-[rgba(242,111,99,0.45)] focus:ring-4 focus:ring-[rgba(242,111,99,0.12)]"
             placeholder="Ex.: Qual estado devo priorizar para hidrogenio verde agora?"
             value={question}
             onChange={(event) => onQuestionChange(event.target.value)}
+            onKeyDown={(event) => {
+              if ((event.metaKey || event.ctrlKey) && event.key === "Enter" && !isLoading && question.trim().length > 0) {
+                event.preventDefault();
+                onSubmit();
+              }
+            }}
           />
           <button
             type="button"

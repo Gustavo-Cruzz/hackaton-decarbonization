@@ -7,6 +7,7 @@ const geminiMock = vi.hoisted(() => ({
 vi.mock("@/lib/gemini", () => geminiMock);
 
 import { POST as chatPost } from "@/app/api/chat/route";
+import { POST as comparePost } from "@/app/api/compare/route";
 import { POST as rankingPost } from "@/app/api/ranking/route";
 
 describe("api contracts", () => {
@@ -77,5 +78,53 @@ describe("api contracts", () => {
     expect(body).toHaveProperty("recommendation");
     expect(body.referencedTerritories).toContain("BA");
     expect(body).toHaveProperty("territorialContext");
+  });
+
+  it("rejects invalid chat payloads", async () => {
+    const request = new Request("http://localhost/api/chat", {
+      method: "POST",
+      body: JSON.stringify({
+        objective: "hidrogenio-verde",
+        profile: "investidor"
+      })
+    });
+
+    const response = await chatPost(request);
+    const body = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(body.error).toContain("Invalid chat payload");
+  });
+
+  it("rejects invalid ranking payloads", async () => {
+    const request = new Request("http://localhost/api/ranking", {
+      method: "POST",
+      body: JSON.stringify({
+        objective: "broken",
+        profile: "investidor"
+      })
+    });
+
+    const response = await rankingPost(request);
+    const body = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(body.error).toContain("Invalid ranking payload");
+  });
+
+  it("rejects invalid compare payloads", async () => {
+    const request = new Request("http://localhost/api/compare", {
+      method: "POST",
+      body: JSON.stringify({
+        objective: "hidrogenio-verde",
+        profile: "broken"
+      })
+    });
+
+    const response = await comparePost(request);
+    const body = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(body.error).toContain("Invalid comparison payload");
   });
 });

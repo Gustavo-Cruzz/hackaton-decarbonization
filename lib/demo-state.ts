@@ -1,6 +1,6 @@
 import { resolveWeights } from "@/lib/imte";
 import { createDefaultLayerVisibility } from "@/lib/map-config";
-import { DemoState, ExperienceMode, LayerGroupKey, LayerKey, LayerVisibilityState, MapLevel, ObjectiveId, ProfileId, Weights } from "@/lib/types";
+import { DemoState, ExperienceMode, LayerGroupKey, LayerKey, LayerVisibilityState, MapLevel, ObjectiveId, OnboardingAnswers, ProfileId, Weights } from "@/lib/types";
 
 export const DEMO_STATE_STORAGE_KEY = "pid-mvp-demo-state:v1";
 
@@ -12,9 +12,11 @@ export function createDefaultDemoState(): DemoState {
   return {
     hasChosenProfile: false,
     profile: "investidor",
+    activeProfileLabel: "Empresarial",
     objective: "hidrogenio-verde",
     weights: resolveWeights("hidrogenio-verde", "investidor"),
     selectedExperience: "map",
+    onboardingAnswers: undefined,
     selectedUf: "BA",
     mapLevel: "national",
     selectedMunicipalityId: undefined,
@@ -30,6 +32,12 @@ export function createDefaultDemoState(): DemoState {
 
 function isProfileId(value: unknown): value is ProfileId {
   return value === "gestor-publico" || value === "investidor" || value === "engenheiro" || value === "pesquisador";
+}
+
+function labelForLegacyProfile(profile: ProfileId) {
+  if (profile === "gestor-publico") return "Governamental";
+  if (profile === "pesquisador") return "Pesquisador / Academico";
+  return "Empresarial";
 }
 
 function isObjectiveId(value: unknown): value is ObjectiveId {
@@ -98,6 +106,49 @@ function sanitizeEnabledLayers(value: unknown): LayerVisibilityState {
   return next;
 }
 
+function sanitizeStringList(value: unknown): string[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value.filter((item): item is string => typeof item === "string");
+}
+
+function sanitizeOnboardingAnswers(value: unknown): OnboardingAnswers | undefined {
+  if (!value || typeof value !== "object") {
+    return undefined;
+  }
+
+  const candidate = value as Partial<OnboardingAnswers>;
+  if (
+    typeof candidate.fullName !== "string" ||
+    typeof candidate.email !== "string" ||
+    typeof candidate.organization !== "string" ||
+    typeof candidate.stateOfOperation !== "string" ||
+    typeof candidate.userType !== "string" ||
+    typeof candidate.primaryProfile !== "string" ||
+    typeof candidate.knowledgeLevel !== "string" ||
+    typeof candidate.wantsPersonalizedInsights !== "boolean"
+  ) {
+    return undefined;
+  }
+
+  return {
+    ...candidate,
+    fullName: candidate.fullName,
+    email: candidate.email,
+    organization: candidate.organization,
+    stateOfOperation: candidate.stateOfOperation,
+    userType: candidate.userType as OnboardingAnswers["userType"],
+    primaryProfile: candidate.primaryProfile as OnboardingAnswers["primaryProfile"],
+    themes: sanitizeStringList(candidate.themes) as OnboardingAnswers["themes"],
+    knowledgeLevel: candidate.knowledgeLevel as OnboardingAnswers["knowledgeLevel"],
+    wantsPersonalizedInsights: candidate.wantsPersonalizedInsights,
+    governmental: candidate.governmental,
+    business: candidate.business,
+    research: candidate.research
+  };
+}
+
 export function sanitizeDemoState(value: unknown): DemoState {
   const fallback = createDefaultDemoState();
   if (!value || typeof value !== "object") {
@@ -112,9 +163,11 @@ export function sanitizeDemoState(value: unknown): DemoState {
   return {
     hasChosenProfile: typeof candidate.hasChosenProfile === "boolean" ? candidate.hasChosenProfile : fallback.hasChosenProfile,
     profile,
+    activeProfileLabel: typeof candidate.activeProfileLabel === "string" ? candidate.activeProfileLabel : labelForLegacyProfile(profile),
     objective,
     weights: sanitizeWeights(candidate.weights, weightFallback),
     selectedExperience: isExperienceMode(candidate.selectedExperience) ? candidate.selectedExperience : fallback.selectedExperience,
+    onboardingAnswers: sanitizeOnboardingAnswers(candidate.onboardingAnswers),
     selectedUf: typeof candidate.selectedUf === "string" ? candidate.selectedUf : fallback.selectedUf,
     mapLevel: isMapLevel(candidate.mapLevel) ? candidate.mapLevel : fallback.mapLevel,
     selectedMunicipalityId:
@@ -145,7 +198,8 @@ export function loadDemoState(storage: Pick<Storage, "getItem"> | undefined): De
     if (typeof parsed === "object" && parsed && typeof parsed.hasChosenProfile !== "boolean" && isProfileId(parsed.profile)) {
       return {
         ...sanitized,
-        hasChosenProfile: true
+        hasChosenProfile: true,
+        activeProfileLabel: labelForLegacyProfile(parsed.profile)
       };
     }
 

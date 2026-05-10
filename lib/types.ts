@@ -24,6 +24,94 @@ export type MapLevel = "national" | "state" | "municipal";
 export type ExperienceMode = "map" | "powerbi";
 export type LegendType = "range" | "symbols";
 export type DataStatus = "official" | "hybrid" | "curated" | "demonstrative" | "partial" | "unavailable";
+export type PrimaryUserProfile = "business" | "government" | "research";
+export type UserClassification = "individual" | "company";
+export type GovernmentSphere = "municipal" | "state" | "federal" | "regional-agency";
+export type GovernmentObjective =
+  | "territorial-planning"
+  | "public-policy"
+  | "climate-monitoring"
+  | "regional-development"
+  | "green-investment"
+  | "energy-management";
+export type GovernmentIndicator =
+  | "carbon-emissions"
+  | "land-use"
+  | "renewable-energy"
+  | "urban-mobility"
+  | "climate-vulnerability"
+  | "green-jobs"
+  | "air-quality"
+  | "energy-security";
+export type GovernmentTracking =
+  | "climate-goals"
+  | "territorial-esg"
+  | "decarbonization-scenarios"
+  | "public-policies"
+  | "climate-alerts"
+  | "public-financing";
+export type BusinessSector =
+  | "energy"
+  | "agro"
+  | "logistics"
+  | "industry"
+  | "financial"
+  | "technology"
+  | "construction"
+  | "other";
+export type BusinessInterest =
+  | "investment-viability"
+  | "emissions-reduction"
+  | "carbon-market"
+  | "esg-compliance"
+  | "renewable-energy"
+  | "energy-efficiency"
+  | "sustainable-supply-chain";
+export type BusinessAnalysis =
+  | "green-roi"
+  | "esg-benchmark"
+  | "tax-incentives"
+  | "climate-risk"
+  | "energy-scenarios"
+  | "regional-opportunities"
+  | "energy-costs";
+export type DecarbonizationGoalStatus = "yes" | "in-progress" | "no" | "unknown";
+export type ResearchArea =
+  | "climate"
+  | "energy"
+  | "mobility"
+  | "land-use"
+  | "green-economy"
+  | "public-policy"
+  | "sustainability-ai";
+export type ResearchNeed =
+  | "datasets"
+  | "apis"
+  | "historical-series"
+  | "visualizations"
+  | "predictive-models"
+  | "comparative-studies"
+  | "data-export";
+export type TechnicalLevel = "simplified" | "technical" | "scientific";
+export type PreferredFormat =
+  | "dashboards"
+  | "interactive-maps"
+  | "analytic-charts"
+  | "automated-reports"
+  | "raw-data"
+  | "simulations";
+export type TrackingTheme =
+  | "solar-energy"
+  | "wind-energy"
+  | "green-hydrogen"
+  | "carbon-market"
+  | "electric-mobility"
+  | "esg"
+  | "energy-efficiency"
+  | "climate-change"
+  | "biofuels"
+  | "other";
+export type KnowledgeLevel = "beginner" | "intermediate" | "advanced" | "expert";
 
 export type ProfileId = "gestor-publico" | "investidor" | "engenheiro" | "pesquisador";
 
@@ -83,6 +171,42 @@ export interface ProfileConfig {
   insightCards: string[];
 }
 
+export interface GovernmentOnboardingAnswers {
+  sphere: GovernmentSphere;
+  mainObjective: GovernmentObjective;
+  indicators: GovernmentIndicator[];
+  tracking: GovernmentTracking[];
+}
+
+export interface BusinessOnboardingAnswers {
+  sector: BusinessSector;
+  primaryInterest: BusinessInterest;
+  desiredAnalyses: BusinessAnalysis[];
+  hasDecarbonizationGoals: DecarbonizationGoalStatus;
+}
+
+export interface ResearchOnboardingAnswers {
+  area: ResearchArea;
+  needs: ResearchNeed[];
+  technicalLevel: TechnicalLevel;
+  preferredFormats: PreferredFormat[];
+}
+
+export interface OnboardingAnswers {
+  fullName: string;
+  email: string;
+  organization: string;
+  stateOfOperation: string;
+  userType: UserClassification;
+  primaryProfile: PrimaryUserProfile;
+  governmental?: GovernmentOnboardingAnswers;
+  business?: BusinessOnboardingAnswers;
+  research?: ResearchOnboardingAnswers;
+  themes: TrackingTheme[];
+  knowledgeLevel: KnowledgeLevel;
+  wantsPersonalizedInsights: boolean;
+}
+
 export interface RankedTerritory extends TerritoryRecord {
   imte: number;
   classification: string;
@@ -117,6 +241,7 @@ export interface ChatRequest {
   activeLayers?: LayerKey[];
   activeTheme?: LayerGroupKey;
   drillDownEnabled?: boolean;
+  onboardingContext?: string;
 }
 
 export interface ChatResponse {
@@ -133,9 +258,11 @@ export type ChatUiState = "idle" | "loading" | "success" | "error";
 export interface DemoState {
   hasChosenProfile: boolean;
   profile: ProfileId;
+  activeProfileLabel: string;
   objective: ObjectiveId;
   weights: Weights;
   selectedExperience: ExperienceMode;
+  onboardingAnswers?: OnboardingAnswers;
   selectedUf: string;
   mapLevel: MapLevel;
   selectedMunicipalityId?: string;

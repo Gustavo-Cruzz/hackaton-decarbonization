@@ -16,6 +16,7 @@ import { ProfileInsights } from "@/components/ProfileInsights";
 import { ProfileOnboarding } from "@/components/ProfileOnboarding";
 import { RankingPanel } from "@/components/RankingPanel";
 import { TerritoryPanel } from "@/components/TerritoryPanel";
+import { ClientSectionBoundary } from "@/components/ClientSectionBoundary";
 import { getEnabledLayerKeys, getLayerDefinition } from "@/lib/map-config";
 import { averageScores } from "@/lib/display";
 import {
@@ -27,6 +28,7 @@ import {
   toggleCompareUfs
 } from "@/lib/demo-state";
 import { resolveWeights } from "@/lib/imte";
+import { buildOnboardingContextSummary, buildOnboardingProfileView, defaultObjectiveForPrimaryProfile, mapPrimaryProfileToEngineProfile } from "@/lib/onboarding";
 import { compareTerritories, rankTerritories } from "@/lib/ranking";
 import { applySearchParamsToState, buildTerritoryDownloadPayload, demoStateToSearchParams } from "@/lib/share-state";
 import {
@@ -36,12 +38,39 @@ import {
   LayerKey,
   MapLevel,
   MunicipalityRecord,
+  OnboardingAnswers,
   ObjectiveId,
   ProfileId,
   Weights
 } from "@/lib/types";
 
 const FLASH_MESSAGE_MS = 2400;
+
+function isChatResponse(value: unknown): value is ChatResponse {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const candidate = value as Partial<ChatResponse>;
+  return (
+    typeof candidate.answer === "string" &&
+    typeof candidate.criteriaUsed === "string" &&
+    typeof candidate.recommendation === "string" &&
+    Array.isArray(candidate.referencedTerritories)
+  );
+}
+
+function isMunicipalityChunkResponse(value: unknown): value is {
+  municipalities: MunicipalityRecord[];
+  municipalityStatus: string;
+} {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const candidate = value as Partial<{ municipalities: unknown; municipalityStatus: unknown }>;
+  return Array.isArray(candidate.municipalities) && typeof candidate.municipalityStatus === "string";
+}
 
 function CollapsibleSection({
   title,
@@ -94,8 +123,13 @@ export default function HomePageClient() {
 
   useEffect(() => {
     const persisted = loadDemoState(window.localStorage);
-    const merged = applySearchParamsToState(persisted, new URLSearchParams(window.location.search));
-    setDemoState(merged);
+    try {
+      const merged = applySearchParamsToState(persisted, new URLSearchParams(window.location.search));
+      setDemoState(merged);
+    } catch (error) {
+      console.error("State hydration failure", error);
+      setDemoState(persisted);
+    }
     setIsHydrated(true);
   }, []);
 
@@ -109,12 +143,12 @@ export default function HomePageClient() {
   }, [demoState, isHydrated]);
 
   useEffect(() => {
-    if (!isHydrated || !demoState.hasChosenProfile) {
+    if (!isHydrated || !demoState.hasChosenProfile || demoState.selectedExperience !== "map") {
       return;
     }
     void submitChat(demoState.chatQuestion || DEFAULT_CHAT_QUESTION);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isHydrated, demoState.hasChosenProfile]);
+  }, [isHydrated, demoState.hasChosenProfile, demoState.selectedExperience]);
 
   useEffect(() => {
     if (!flashMessage) {
@@ -132,8 +166,16 @@ export default function HomePageClient() {
   const municipalities = municipalityCache[demoState.selectedUf] ?? [];
   const selectedMunicipality = municipalities.find((territory) => territory.id === demoState.selectedMunicipalityId) ?? null;
   const comparison = compareTerritories(ranked, demoState.compareUfs);
-  const currentProfile = profiles.find((item) => item.id === demoState.profile) ?? profiles[1];
+  const currentEngineProfile = profiles.find((item) => item.id === demoState.profile) ?? profiles[1];
   const currentObjective = objectivePresets.find((item) => item.id === demoState.objective) ?? objectivePresets[0];
+  const currentProfileView = demoState.onboardingAnswers
+    ? buildOnboardingProfileView(demoState.onboardingAnswers)
+    : {
+        label: demoState.activeProfileLabel,
+        tone: currentEngineProfile.tone,
+        insightCards: currentEngineProfile.insightCards,
+        suggestedQuestions: currentEngineProfile.suggestedQuestions
+      };
   const comparisonAverage = averageScores(ranked.map((territory) => ({ scores: territory.scores })));
   const territorialContextLabel =
     demoState.mapLevel === "municipal" && selectedMunicipality
@@ -168,7 +210,13 @@ export default function HomePageClient() {
 
     void fetch(`/api/territories/${demoState.selectedUf}?level=municipal`, { signal: controller.signal })
       .then(async (response) => {
-        const body = await response.json();
+        if (!response.ok) {
+          throw new Error(`municipality-fetch-${response.status}`);
+        }
+        const body = (await response.json()) as unknown;
+        if (!isMunicipalityChunkResponse(body)) {
+          throw new Error("invalid-municipality-response");
+        }
         const nextMunicipalities = (body.municipalities ?? []) as MunicipalityRecord[];
         if (body.municipalityStatus !== "available" || nextMunicipalities.length === 0) {
           setMunicipalityStatus("unavailable");
@@ -190,7 +238,8 @@ export default function HomePageClient() {
           selectedMunicipalityId: current.selectedMunicipalityId ?? nextMunicipalities[0]?.id
         }));
       })
-      .catch(() => {
+      .catch((error) => {
+        console.error("Municipality fetch failure", error);
         setMunicipalityStatus("unavailable");
         setDemoState((current) => ({
           ...current,
@@ -206,14 +255,19 @@ export default function HomePageClient() {
     setDemoState((current) => ({ ...current, ...next }));
   }
 
-  function applyProfile(profile: ProfileId) {
-    const nextObjective = profiles.find((item) => item.id === profile)?.suggestedObjective ?? demoState.objective;
+  function completeOnboarding(answers: OnboardingAnswers) {
+    const profile = mapPrimaryProfileToEngineProfile(answers.primaryProfile);
+    const objective = defaultObjectiveForPrimaryProfile(answers.primaryProfile);
+    const profileView = buildOnboardingProfileView(answers);
     updateDemoState({
       hasChosenProfile: true,
+      activeProfileLabel: profileView.label,
       profile,
-      objective: nextObjective,
-      weights: resolveWeights(nextObjective, profile),
-      selectedExperience: "map"
+      objective,
+      weights: resolveWeights(objective, profile),
+      selectedExperience: "map",
+      onboardingAnswers: answers,
+      chatQuestion: DEFAULT_CHAT_QUESTION
     });
   }
 
@@ -232,9 +286,11 @@ export default function HomePageClient() {
       ...demoState,
       hasChosenProfile: true,
       profile,
+      activeProfileLabel: "Empresarial",
       objective,
       weights,
       selectedExperience: "map",
+      onboardingAnswers: demoState.onboardingAnswers,
       selectedUf: "BA",
       mapLevel: "state",
       selectedMunicipalityId: undefined,
@@ -283,18 +339,25 @@ export default function HomePageClient() {
           selectedMunicipalityName: overrides?.selectedMunicipalityName ?? selectedMunicipality?.name,
           activeLayers: getEnabledLayerKeys(demoState.enabledLayers),
           activeTheme: demoState.activeTheme,
-          drillDownEnabled: demoState.mapLevel === "municipal"
+          drillDownEnabled: demoState.mapLevel === "municipal",
+          onboardingContext: demoState.onboardingAnswers ? buildOnboardingContextSummary(demoState.onboardingAnswers) : undefined
         })
       });
 
       if (!response.ok) {
+        console.error("Chat response status failure", response.status);
         throw new Error("chat-failed");
       }
 
-      const data = (await response.json()) as ChatResponse;
+      const data = (await response.json()) as unknown;
+      if (!isChatResponse(data)) {
+        console.error("Invalid chat payload", data);
+        throw new Error("invalid-chat-response");
+      }
       setChatResponse(data);
       setChatStatus("success");
-    } catch {
+    } catch (error) {
+      console.error("Chat client failure", error);
       setChatStatus("error");
       setChatErrorMessage("Nao consegui consultar o chatbot agora. Tente novamente para continuar a demo.");
     }
@@ -384,7 +447,7 @@ export default function HomePageClient() {
   if (!demoState.hasChosenProfile) {
     return (
       <main className="mx-auto flex min-h-screen max-w-[1600px] flex-col gap-6 px-4 py-6 text-[15px] lg:px-6">
-        <ProfileOnboarding profiles={profiles} onChooseProfile={applyProfile} />
+        <ProfileOnboarding initialAnswers={demoState.onboardingAnswers} onComplete={completeOnboarding} />
       </main>
     );
   }
@@ -392,7 +455,7 @@ export default function HomePageClient() {
   return (
     <main className="mx-auto flex min-h-screen max-w-[1600px] flex-col gap-6 px-4 py-6 text-[15px] lg:px-6">
       <Header
-        profile={demoState.profile}
+        activeProfileLabel={demoState.activeProfileLabel}
         objective={demoState.objective}
         chatOpen={demoState.chatOpen}
         selectedExperience={demoState.selectedExperience}
@@ -403,103 +466,109 @@ export default function HomePageClient() {
       />
 
       {demoState.selectedExperience === "powerbi" ? (
-        <PowerBiPanel />
+        <ClientSectionBoundary label="o painel Power BI">
+          <PowerBiPanel />
+        </ClientSectionBoundary>
       ) : (
         <>
-          <section className="grid gap-6 xl:grid-cols-[minmax(0,1.75fr)_390px]">
-            <MapView
-              ranked={ranked}
-              municipalities={municipalities}
-              municipalityStatus={municipalityStatus}
-              selectedUf={selectedState.uf}
-              selectedMunicipalityId={demoState.selectedMunicipalityId}
-              mapLevel={demoState.mapLevel}
-              activeTheme={demoState.activeTheme}
-              enabledLayers={demoState.enabledLayers}
-              layerOpacity={demoState.layerOpacity}
-              useBasemap={demoState.useBasemap}
-              onSelectUf={handleSelectUf}
-              onSelectMunicipality={(selectedMunicipalityId) => updateDemoState({ selectedMunicipalityId, mapLevel: "municipal" })}
-              onToggleLayer={toggleLayer}
-              onSetActiveTheme={handleSetTheme}
-              onSetMapLevel={setMapLevel}
-              onSetLayerOpacity={(layerOpacity) => updateDemoState({ layerOpacity })}
-              onToggleBasemap={() => updateDemoState({ useBasemap: !demoState.useBasemap })}
-              onResetView={() => updateDemoState({ mapLevel: "national", selectedMunicipalityId: undefined })}
-              onShareView={() => void shareView()}
-              onDownloadTerritory={downloadTerritory}
-            />
-            <div className="space-y-6">
-              <TerritoryPanel
-                selectedState={selectedState}
-                selectedMunicipality={selectedMunicipality}
-                comparisonAverage={comparisonAverage}
-                profile={currentProfile}
-                isCompared={demoState.compareUfs.includes(selectedState.uf)}
-                onCompare={() => toggleCompare(selectedState.uf)}
-                onAskChat={handleAskTerritoryChat}
-              />
-              <ChatbotPanel
-                isOpen={demoState.chatOpen}
-                question={demoState.chatQuestion}
-                status={chatStatus}
-                response={chatResponse}
-                errorMessage={chatErrorMessage}
-                territorialContextLabel={territorialContextLabel}
-                onQuestionChange={(chatQuestion) => updateDemoState({ chatQuestion })}
-                onSubmit={() => void submitChat(demoState.chatQuestion)}
-              />
-              <ProfileInsights profile={currentProfile} onAskSuggestedQuestion={(question) => void submitChat(question)} />
-              <DataDisclaimer />
-            </div>
-          </section>
-
-          <section className="grid gap-6 xl:grid-cols-3">
-            <CollapsibleSection
-              title="Comparacao guiada"
-              description="Abra quando quiser comparar ate 3 estados lado a lado."
-              isOpen={comparisonOpen}
-              onToggle={() => setComparisonOpen((current) => !current)}
-            >
-              <ComparisonPanel
+          <ClientSectionBoundary label="a experiencia do mapa">
+            <section className="grid gap-6 xl:grid-cols-[minmax(0,1.75fr)_390px]">
+              <MapView
                 ranked={ranked}
-                comparison={comparison}
-                compareUfs={demoState.compareUfs}
-                onToggleCompare={toggleCompare}
-                compact
-              />
-            </CollapsibleSection>
-            <CollapsibleSection
-              title="Ranking territorial"
-              description="Clique para abrir a fila de territórios e comparar IMTE com menos ruído."
-              isOpen={rankingOpen}
-              onToggle={() => setRankingOpen((current) => !current)}
-            >
-              <RankingPanel
-                ranked={ranked}
+                municipalities={municipalities}
+                municipalityStatus={municipalityStatus}
                 selectedUf={selectedState.uf}
-                objective={demoState.objective}
-                profile={demoState.profile}
+                selectedMunicipalityId={demoState.selectedMunicipalityId}
+                mapLevel={demoState.mapLevel}
+                activeTheme={demoState.activeTheme}
+                enabledLayers={demoState.enabledLayers}
+                layerOpacity={demoState.layerOpacity}
+                useBasemap={demoState.useBasemap}
                 onSelectUf={handleSelectUf}
-                compact
+                onSelectMunicipality={(selectedMunicipalityId) => updateDemoState({ selectedMunicipalityId, mapLevel: "municipal" })}
+                onToggleLayer={toggleLayer}
+                onSetActiveTheme={handleSetTheme}
+                onSetMapLevel={setMapLevel}
+                onSetLayerOpacity={(layerOpacity) => updateDemoState({ layerOpacity })}
+                onToggleBasemap={() => updateDemoState({ useBasemap: !demoState.useBasemap })}
+                onResetView={() => updateDemoState({ mapLevel: "national", selectedMunicipalityId: undefined })}
+                onShareView={() => void shareView()}
+                onDownloadTerritory={downloadTerritory}
               />
-            </CollapsibleSection>
-            <CollapsibleSection
-              title="Indice personalizavel"
-              description="Abra so se quiser ajustar pesos e recalcular a leitura."
-              isOpen={indexOpen}
-              onToggle={() => setIndexOpen((current) => !current)}
-            >
-              <CustomIndexBuilder
-                objective={currentObjective}
-                weights={demoState.weights}
-                resetMessage={flashMessage}
-                onUpdateWeight={updateWeight}
-                onResetWeights={resetWeights}
-                compact
-              />
-            </CollapsibleSection>
-          </section>
+              <div className="space-y-6">
+                <TerritoryPanel
+                  selectedState={selectedState}
+                  selectedMunicipality={selectedMunicipality}
+                  comparisonAverage={comparisonAverage}
+                  profile={currentEngineProfile}
+                  isCompared={demoState.compareUfs.includes(selectedState.uf)}
+                  onCompare={() => toggleCompare(selectedState.uf)}
+                  onAskChat={handleAskTerritoryChat}
+                />
+                <ChatbotPanel
+                  isOpen={demoState.chatOpen}
+                  question={demoState.chatQuestion}
+                  status={chatStatus}
+                  response={chatResponse}
+                  errorMessage={chatErrorMessage}
+                  territorialContextLabel={territorialContextLabel}
+                  onQuestionChange={(chatQuestion) => updateDemoState({ chatQuestion })}
+                  onSubmit={() => void submitChat(demoState.chatQuestion)}
+                />
+                <ProfileInsights profile={currentProfileView} onAskSuggestedQuestion={(question) => void submitChat(question)} />
+                <DataDisclaimer />
+              </div>
+            </section>
+          </ClientSectionBoundary>
+
+          <ClientSectionBoundary label="os paineis analiticos">
+            <section className="grid gap-6 xl:grid-cols-3">
+              <CollapsibleSection
+                title="Comparacao guiada"
+                description="Abra quando quiser comparar ate 3 estados lado a lado."
+                isOpen={comparisonOpen}
+                onToggle={() => setComparisonOpen((current) => !current)}
+              >
+                <ComparisonPanel
+                  ranked={ranked}
+                  comparison={comparison}
+                  compareUfs={demoState.compareUfs}
+                  onToggleCompare={toggleCompare}
+                  compact
+                />
+              </CollapsibleSection>
+              <CollapsibleSection
+                title="Ranking territorial"
+                description="Clique para abrir a fila de territórios e comparar IMTE com menos ruído."
+                isOpen={rankingOpen}
+                onToggle={() => setRankingOpen((current) => !current)}
+              >
+                <RankingPanel
+                  ranked={ranked}
+                  selectedUf={selectedState.uf}
+                  objective={demoState.objective}
+                  profile={demoState.profile}
+                  onSelectUf={handleSelectUf}
+                  compact
+                />
+              </CollapsibleSection>
+              <CollapsibleSection
+                title="Indice personalizavel"
+                description="Abra so se quiser ajustar pesos e recalcular a leitura."
+                isOpen={indexOpen}
+                onToggle={() => setIndexOpen((current) => !current)}
+              >
+                <CustomIndexBuilder
+                  objective={currentObjective}
+                  weights={demoState.weights}
+                  resetMessage={flashMessage}
+                  onUpdateWeight={updateWeight}
+                  onResetWeights={resetWeights}
+                  compact
+                />
+              </CollapsibleSection>
+            </section>
+          </ClientSectionBoundary>
         </>
       )}
     </main>

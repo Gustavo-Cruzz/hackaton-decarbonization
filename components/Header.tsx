@@ -2,11 +2,10 @@
 
 import clsx from "clsx";
 import { objectivePresets } from "@/data/objectives";
-import { profiles } from "@/data/profiles";
-import { ExperienceMode, ObjectiveId, ProfileId } from "@/lib/types";
+import { ExperienceMode, ObjectiveId } from "@/lib/types";
 
 interface HeaderProps {
-  profile: ProfileId;
+  activeProfileLabel: string;
   objective: ObjectiveId;
   chatOpen: boolean;
   selectedExperience: ExperienceMode;
@@ -17,7 +16,7 @@ interface HeaderProps {
 }
 
 export function Header({
-  profile,
+  activeProfileLabel,
   objective,
   chatOpen,
   selectedExperience,
@@ -26,8 +25,6 @@ export function Header({
   onApplyPitchFlow,
   onSelectExperience
 }: HeaderProps) {
-  const profileLabel = profiles.find((item) => item.id === profile)?.label ?? profile;
-
   return (
     <header className="glass shadow-panel rounded-[30px] px-6 py-5">
       <div className="space-y-5">
@@ -81,7 +78,7 @@ export function Header({
                 Pitch rapido: Investidor + Hidrogenio verde + Bahia
               </button>
               <div className="rounded-full border border-[rgba(15,118,110,0.12)] bg-[rgba(15,118,110,0.08)] px-4 py-2 text-sm text-[var(--teal)]">
-                Perfil ativo: {profileLabel}
+                Perfil ativo: {activeProfileLabel}
               </div>
             </div>
           </div>

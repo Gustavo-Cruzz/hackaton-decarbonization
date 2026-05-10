@@ -1,9 +1,12 @@
 "use client";
 
-import { ProfileConfig } from "@/lib/types";
-
 interface ProfileInsightsProps {
-  profile: ProfileConfig;
+  profile: {
+    label: string;
+    tone: string;
+    insightCards: string[];
+    suggestedQuestions: string[];
+  };
   onAskSuggestedQuestion: (question: string) => void;
 }
 

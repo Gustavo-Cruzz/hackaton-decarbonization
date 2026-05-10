@@ -72,6 +72,7 @@ Contexto de perfil:
 - Perfil: ${context.profile?.label ?? request.profile}
 - Objetivo: ${context.objective?.label ?? request.objective}
 - Criterio do objetivo: ${context.objective?.criteriaSummary ?? ""}
+- Contexto adicional do onboarding: ${request.onboardingContext ?? "nao informado"}
 
 Territorio em foco:
 ${selected ? JSON.stringify({

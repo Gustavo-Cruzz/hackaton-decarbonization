@@ -21,6 +21,7 @@ describe("demo state helpers", () => {
     });
 
     expect(state.profile).toBe("investidor");
+    expect(state.activeProfileLabel).toBe("Empresarial");
     expect(state.objective).toBe("hidrogenio-verde");
     expect(state.selectedUf).toBe("BA");
     expect(state.mapLevel).toBe("national");
@@ -58,6 +59,7 @@ describe("demo state helpers", () => {
 
     expect(state.hasChosenProfile).toBe(true);
     expect(state.profile).toBe("engenheiro");
+    expect(state.activeProfileLabel).toBe("Empresarial");
   });
 
   it("updates comparison list with max three territories", () => {

@@ -1,5 +1,5 @@
 import { ChatbotPanel } from "@/components/ChatbotPanel";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -58,5 +58,27 @@ describe("ChatbotPanel", () => {
     expect(onSubmit).toHaveBeenCalledTimes(1);
     expect(screen.getByText("Bahia lidera.")).toBeVisible();
     expect(screen.getByText("Criterios usados aqui.")).toBeVisible();
+  });
+
+  it("uses a growing textarea and submits with ctrl+enter", () => {
+    const onSubmit = vi.fn();
+
+    render(
+      <ChatbotPanel
+        isOpen
+        question={"Preciso comparar um texto bem maior\ncom varias linhas\npara conseguir ler melhor"}
+        status="idle"
+        response={null}
+        errorMessage={null}
+        onQuestionChange={vi.fn()}
+        onSubmit={onSubmit}
+      />
+    );
+
+    const textarea = screen.getAllByLabelText("Pergunta para o chatbot").at(-1) as HTMLTextAreaElement;
+    expect(textarea.tagName).toBe("TEXTAREA");
+
+    fireEvent.keyDown(textarea, { key: "Enter", ctrlKey: true });
+    expect(onSubmit).toHaveBeenCalledTimes(1);
   });
 });

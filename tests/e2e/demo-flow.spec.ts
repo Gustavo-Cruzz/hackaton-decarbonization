@@ -3,8 +3,24 @@ import { expect, test } from "@playwright/test";
 test("critical pitch flow works end-to-end with municipal drill-down", async ({ page }) => {
   await page.goto("/");
 
-  await expect(page.getByText("Escolha seu perfil")).toBeVisible();
-  await page.getByRole("button", { name: /Entrar como Investidor/i }).click();
+  await expect(page.getByText("Configure sua experiencia em quatro etapas")).toBeVisible();
+  await page.getByLabel(/Nome completo/i).fill("Maria da Silva");
+  await page.getByLabel(/E-mail/i).fill("maria@example.com");
+  await page.getByLabel(/Organizacao/i).fill("Empresa Verde");
+  await page.getByLabel(/Estado de atuacao/i).fill("Bahia");
+  await page.getByRole("button", { name: "Continuar" }).click();
+  await page.getByRole("button", { name: "Pessoa Juridica" }).click();
+  await page.getByRole("button", { name: /Empresarial/i }).click();
+  await page.getByRole("button", { name: "Continuar" }).click();
+  await page.getByLabel(/Qual setor da empresa/i).selectOption("energy");
+  await page.getByLabel(/Qual seu principal interesse/i).selectOption("investment-viability");
+  await page.getByRole("button", { name: "ROI de projetos verdes" }).click();
+  await page.getByRole("button", { name: "Sim" }).click();
+  await page.getByRole("button", { name: "Continuar" }).click();
+  await page.getByRole("button", { name: "Hidrogenio verde" }).click();
+  await page.getByRole("button", { name: "Avancado" }).click();
+  await page.getByRole("button", { name: "Sim" }).last().click();
+  await page.getByRole("button", { name: "Entrar na plataforma" }).click();
   await expect(page.getByText("Copiloto territorial para transicao energetica e descarbonizacao")).toBeVisible();
   await expect(page.getByText(/drill-down municipal usa proxy demonstrativo local/i)).toBeVisible();
   await expect(page.getByRole("button", { name: /Pitch rapido/i })).toBeVisible();

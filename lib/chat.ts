@@ -82,7 +82,7 @@ export function answerChat(request: ChatRequest, territories: TerritoryRecord[])
 
     return {
       answer: answerByObjective[objectiveId],
-      criteriaUsed: `Usei o objetivo ${objectivePresets.find((item) => item.id === objectiveId)?.label.toLowerCase()} e as camadas disponiveis neste MVP.`,
+      criteriaUsed: `Usei o objetivo ${objectivePresets.find((item) => item.id === objectiveId)?.label.toLowerCase()} e as camadas disponiveis neste MVP.${request.onboardingContext ? ` Contexto do usuario: ${request.onboardingContext}` : ""}`,
       recommendation: "Comece por IMTE e adicione camadas produtivas e logisticas para explicar o territorio sem poluir a demonstracao.",
       referencedTerritories: selected ? [selected.uf] : [],
       territorialContext: buildTerritorialContext(request, selected)
@@ -93,7 +93,7 @@ export function answerChat(request: ChatRequest, territories: TerritoryRecord[])
     const target = selected ?? ranked[0];
     return {
       answer: `Os principais gargalos de ${target.state} neste MVP sao: ${target.bottlenecks.join(" e ")}.`,
-      criteriaUsed: `Usei o territorio em foco, o objetivo ${objective?.label.toLowerCase()} e a leitura hibrida de gargalos derivada do dataset local. ${summarizeMethodology(target)}`,
+      criteriaUsed: `Usei o territorio em foco, o objetivo ${objective?.label.toLowerCase()} e a leitura hibrida de gargalos derivada do dataset local. ${summarizeMethodology(target)}${request.onboardingContext ? ` Contexto do usuario: ${request.onboardingContext}` : ""}`,
       recommendation: `Use ${target.state} quando quiser mostrar maturidade com restricoes concretas e nao apenas potencial bruto.`,
       referencedTerritories: [target.uf],
       territorialContext: buildTerritorialContext(request, target)
@@ -104,7 +104,7 @@ export function answerChat(request: ChatRequest, territories: TerritoryRecord[])
     const target = selected ?? ranked[0];
     return {
       answer: `${target.state} aparece bem posicionado porque combina ${target.strengths.slice(0, 2).join(" e ")}.`,
-      criteriaUsed: `Usei os scores de IMTE, as forcas do territorio, os criterios de ${objective?.label.toLowerCase()} e a composicao metodologica atual. ${summarizeMethodology(target)}`,
+      criteriaUsed: `Usei os scores de IMTE, as forcas do territorio, os criterios de ${objective?.label.toLowerCase()} e a composicao metodologica atual. ${summarizeMethodology(target)}${request.onboardingContext ? ` Contexto do usuario: ${request.onboardingContext}` : ""}`,
       recommendation: `Ao apresentar ${target.state}, conecte a leitura de score com infraestrutura, recursos renovaveis e setores promissores.`,
       referencedTerritories: [target.uf],
       territorialContext: buildTerritorialContext(request, target)
@@ -120,7 +120,7 @@ export function answerChat(request: ChatRequest, territories: TerritoryRecord[])
       const [left, right] = comparison;
       return {
         answer: `${left.state} supera ${right.state} no recorte atual por combinar IMTE ${left.imte} com melhor aderencia aos criterios de ${objective?.label.toLowerCase()}.`,
-        criteriaUsed: `Criterei ${objective?.criteriaSummary.toLowerCase()} com linguagem orientada a ${profile?.label.toLowerCase()}. ${summarizeMethodology(left)}`,
+        criteriaUsed: `Criterei ${objective?.criteriaSummary.toLowerCase()} com linguagem orientada a ${profile?.label.toLowerCase()}. ${summarizeMethodology(left)}${request.onboardingContext ? ` Contexto do usuario: ${request.onboardingContext}` : ""}`,
         recommendation: `Priorize ${left.state} se a tese exigir velocidade e mantenha ${right.state} como alternativa complementar.`,
         referencedTerritories: [left.uf, right.uf],
         territorialContext: buildTerritorialContext(request, left)
@@ -133,7 +133,7 @@ export function answerChat(request: ChatRequest, territories: TerritoryRecord[])
     const [first, second] = safRanking;
     return {
       answer: `${first.state} lidera para SAF, seguido por ${second.state}, porque o recorte valoriza biomassa, integracao industrial e logistica.`,
-      criteriaUsed: `Usei ${objectivePresets.find((item) => item.id === "saf")?.criteriaSummary.toLowerCase()} com base hibrida ANEEL + IBGE e sinais curados temporarios.`,
+      criteriaUsed: `Usei ${objectivePresets.find((item) => item.id === "saf")?.criteriaSummary.toLowerCase()} com base hibrida ANEEL + IBGE e sinais curados temporarios.${request.onboardingContext ? ` Contexto do usuario: ${request.onboardingContext}` : ""}`,
       recommendation: `Vale explorar ${first.state} para escala industrial e ${second.state} como polo complementar.`,
       referencedTerritories: [first.uf, second.uf],
       territorialContext: buildTerritorialContext(request, first)
@@ -148,7 +148,7 @@ export function answerChat(request: ChatRequest, territories: TerritoryRecord[])
         request.mapLevel === "municipal" && request.selectedMunicipalityName
           ? `${territoryName} esta em leitura municipal demonstrativa dentro de ${selected.state}. ${topTwo}`
           : `${selected.state} tem IMTE ${selected.imte} e classificacao ${selected.classification.toLowerCase()}. ${topTwo}`,
-      criteriaUsed: `Usei ${objective?.criteriaSummary.toLowerCase()} com o perfil ${profile?.label.toLowerCase()} e os scores territoriais do MVP. ${summarizeMethodology(selected)}`,
+      criteriaUsed: `Usei ${objective?.criteriaSummary.toLowerCase()} com o perfil ${profile?.label.toLowerCase()} e os scores territoriais do MVP. ${summarizeMethodology(selected)}${request.onboardingContext ? ` Contexto do usuario: ${request.onboardingContext}` : ""}`,
       recommendation:
         request.mapLevel === "municipal" && request.selectedMunicipalityName
           ? `Use o municipio como gatilho exploratorio e confirme a oportunidade com dados locais antes de decidir.`
@@ -161,7 +161,7 @@ export function answerChat(request: ChatRequest, territories: TerritoryRecord[])
   const [first, second] = ranked;
   return {
     answer: `${first.state} lidera o ranking atual, com ${second.state} logo atras.`,
-    criteriaUsed: `Usei ${objective?.criteriaSummary.toLowerCase()} e o perfil ${profile?.label.toLowerCase()}.`,
+    criteriaUsed: `Usei ${objective?.criteriaSummary.toLowerCase()} e o perfil ${profile?.label.toLowerCase()}.${request.onboardingContext ? ` Contexto do usuario: ${request.onboardingContext}` : ""}`,
     recommendation: `Comece a demonstracao por ${first.state} e use ${second.state} para contraste de decisao.`,
     referencedTerritories: [first.uf, second.uf],
     territorialContext: buildTerritorialContext(request, first)
