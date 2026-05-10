@@ -25,7 +25,7 @@ describe("Gemini integration helpers", () => {
       "answer": "Bahia lidera.",
       "criteriaUsed": "Energia limpa e logistica.",
       "recommendation": "Comece por Bahia.",
-      "mvpDisclaimer": "Base hibrida do MVP."
+      "territorialContext": "Bahia (BA) em nivel estadual."
     }`);
 
     expect(parsed?.answer).toContain("Bahia");
@@ -38,7 +38,7 @@ describe("Gemini integration helpers", () => {
         answer: "Bahia lidera.",
         criteriaUsed: "Energia limpa e logistica.",
         recommendation: "Comece por Bahia.",
-        mvpDisclaimer: "Base hibrida do MVP."
+        territorialContext: "Bahia (BA) em nivel estadual."
       },
       ["BA", "CE"]
     );

@@ -11,7 +11,6 @@ interface GeminiChatDraft {
   answer?: string;
   criteriaUsed?: string;
   recommendation?: string;
-  mvpDisclaimer?: string;
   territorialContext?: string;
 }
 
@@ -109,9 +108,8 @@ Regras de resposta:
 - Responda em portugues do Brasil.
 - Seja objetivo, executivo e claro.
 - Sempre devolva JSON valido, sem markdown, sem crases e sem texto fora do JSON.
-- O JSON deve ter exatamente as chaves: answer, criteriaUsed, recommendation, mvpDisclaimer, territorialContext.
-- mvpDisclaimer deve lembrar que a leitura usa base hibrida do MVP com ANEEL SIGA, IBGE e sinais curados temporarios.
-`.trim()
+- O JSON deve ter exatamente as chaves: answer, criteriaUsed, recommendation, territorialContext.
+  `.trim()
   };
 }
 
@@ -126,7 +124,7 @@ function normalizeGeminiJson(text: string): GeminiChatDraft | null {
 }
 
 function toChatResponse(draft: GeminiChatDraft | null, referencedTerritories: string[]): ChatResponse | null {
-  if (!draft?.answer || !draft.criteriaUsed || !draft.recommendation || !draft.mvpDisclaimer) {
+  if (!draft?.answer || !draft.criteriaUsed || !draft.recommendation) {
     return null;
   }
 
@@ -134,7 +132,6 @@ function toChatResponse(draft: GeminiChatDraft | null, referencedTerritories: st
     answer: draft.answer,
     criteriaUsed: draft.criteriaUsed,
     recommendation: draft.recommendation,
-    mvpDisclaimer: draft.mvpDisclaimer,
     referencedTerritories,
     territorialContext: draft.territorialContext
   };

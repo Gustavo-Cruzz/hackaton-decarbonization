@@ -35,7 +35,6 @@ describe("api contracts", () => {
       answer: "Bahia lidera para hidrogenio verde.",
       criteriaUsed: "Usei energia limpa e logistica.",
       recommendation: "Comece por Bahia.",
-      mvpDisclaimer: "Base hibrida do MVP.",
       referencedTerritories: ["BA", "CE"]
     });
 

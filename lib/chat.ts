@@ -4,9 +4,6 @@ import { readableDimension } from "@/lib/imte";
 import { rankTerritories } from "@/lib/ranking";
 import { ChatRequest, ChatResponse, RankedTerritory, TerritoryRecord } from "@/lib/types";
 
-const disclaimer =
-  "Observacao: esta analise usa a base hibrida do MVP, com ANEEL SIGA, IBGE e sinais curados temporarios, e deve ser validada antes de uma decisao real.";
-
 function normalizeText(value: string) {
   return value
     .normalize("NFD")
@@ -87,7 +84,6 @@ export function answerChat(request: ChatRequest, territories: TerritoryRecord[])
       answer: answerByObjective[objectiveId],
       criteriaUsed: `Usei o objetivo ${objectivePresets.find((item) => item.id === objectiveId)?.label.toLowerCase()} e as camadas disponiveis neste MVP.`,
       recommendation: "Comece por IMTE e adicione camadas produtivas e logisticas para explicar o territorio sem poluir a demonstracao.",
-      mvpDisclaimer: disclaimer,
       referencedTerritories: selected ? [selected.uf] : [],
       territorialContext: buildTerritorialContext(request, selected)
     };
@@ -99,7 +95,6 @@ export function answerChat(request: ChatRequest, territories: TerritoryRecord[])
       answer: `Os principais gargalos de ${target.state} neste MVP sao: ${target.bottlenecks.join(" e ")}.`,
       criteriaUsed: `Usei o territorio em foco, o objetivo ${objective?.label.toLowerCase()} e a leitura hibrida de gargalos derivada do dataset local. ${summarizeMethodology(target)}`,
       recommendation: `Use ${target.state} quando quiser mostrar maturidade com restricoes concretas e nao apenas potencial bruto.`,
-      mvpDisclaimer: disclaimer,
       referencedTerritories: [target.uf],
       territorialContext: buildTerritorialContext(request, target)
     };
@@ -111,7 +106,6 @@ export function answerChat(request: ChatRequest, territories: TerritoryRecord[])
       answer: `${target.state} aparece bem posicionado porque combina ${target.strengths.slice(0, 2).join(" e ")}.`,
       criteriaUsed: `Usei os scores de IMTE, as forcas do territorio, os criterios de ${objective?.label.toLowerCase()} e a composicao metodologica atual. ${summarizeMethodology(target)}`,
       recommendation: `Ao apresentar ${target.state}, conecte a leitura de score com infraestrutura, recursos renovaveis e setores promissores.`,
-      mvpDisclaimer: disclaimer,
       referencedTerritories: [target.uf],
       territorialContext: buildTerritorialContext(request, target)
     };
@@ -128,7 +122,6 @@ export function answerChat(request: ChatRequest, territories: TerritoryRecord[])
         answer: `${left.state} supera ${right.state} no recorte atual por combinar IMTE ${left.imte} com melhor aderencia aos criterios de ${objective?.label.toLowerCase()}.`,
         criteriaUsed: `Criterei ${objective?.criteriaSummary.toLowerCase()} com linguagem orientada a ${profile?.label.toLowerCase()}. ${summarizeMethodology(left)}`,
         recommendation: `Priorize ${left.state} se a tese exigir velocidade e mantenha ${right.state} como alternativa complementar.`,
-        mvpDisclaimer: disclaimer,
         referencedTerritories: [left.uf, right.uf],
         territorialContext: buildTerritorialContext(request, left)
       };
@@ -142,7 +135,6 @@ export function answerChat(request: ChatRequest, territories: TerritoryRecord[])
       answer: `${first.state} lidera para SAF, seguido por ${second.state}, porque o recorte valoriza biomassa, integracao industrial e logistica.`,
       criteriaUsed: `Usei ${objectivePresets.find((item) => item.id === "saf")?.criteriaSummary.toLowerCase()} com base hibrida ANEEL + IBGE e sinais curados temporarios.`,
       recommendation: `Vale explorar ${first.state} para escala industrial e ${second.state} como polo complementar.`,
-      mvpDisclaimer: disclaimer,
       referencedTerritories: [first.uf, second.uf],
       territorialContext: buildTerritorialContext(request, first)
     };
@@ -161,7 +153,6 @@ export function answerChat(request: ChatRequest, territories: TerritoryRecord[])
         request.mapLevel === "municipal" && request.selectedMunicipalityName
           ? `Use o municipio como gatilho exploratorio e confirme a oportunidade com dados locais antes de decidir.`
           : `${selected.recommendations[0]}. Para este perfil, o principal sinal e ${selected.promisingSectors[0].toLowerCase()}.`,
-      mvpDisclaimer: disclaimer,
       referencedTerritories: [selected.uf, ranked[0].uf, ranked[1].uf],
       territorialContext: buildTerritorialContext(request, selected)
     };
@@ -172,7 +163,6 @@ export function answerChat(request: ChatRequest, territories: TerritoryRecord[])
     answer: `${first.state} lidera o ranking atual, com ${second.state} logo atras.`,
     criteriaUsed: `Usei ${objective?.criteriaSummary.toLowerCase()} e o perfil ${profile?.label.toLowerCase()}.`,
     recommendation: `Comece a demonstracao por ${first.state} e use ${second.state} para contraste de decisao.`,
-    mvpDisclaimer: disclaimer,
     referencedTerritories: [first.uf, second.uf],
     territorialContext: buildTerritorialContext(request, first)
   };

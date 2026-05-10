@@ -3,11 +3,12 @@ import { expect, test } from "@playwright/test";
 test("critical pitch flow works end-to-end with municipal drill-down", async ({ page }) => {
   await page.goto("/");
 
+  await expect(page.getByText("Escolha seu perfil")).toBeVisible();
+  await page.getByRole("button", { name: /Entrar como Investidor/i }).click();
   await expect(page.getByText("Copiloto territorial para transicao energetica e descarbonizacao")).toBeVisible();
   await expect(page.getByText(/drill-down municipal usa proxy demonstrativo local/i)).toBeVisible();
   await expect(page.getByRole("button", { name: /Pitch rapido/i })).toBeVisible();
 
-  await page.getByLabel("Perfil").selectOption("investidor");
   await page.getByLabel("Objetivo").selectOption("hidrogenio-verde");
 
   await page.getByTestId("map-state-BA").click();

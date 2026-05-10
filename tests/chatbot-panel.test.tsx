@@ -46,7 +46,6 @@ describe("ChatbotPanel", () => {
           answer: "Bahia lidera.",
           criteriaUsed: "Criterios usados aqui.",
           recommendation: "Recomendacao aqui.",
-          mvpDisclaimer: "Disclaimer aqui.",
           referencedTerritories: ["BA"]
         }}
         errorMessage={null}

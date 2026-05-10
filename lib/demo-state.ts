@@ -1,6 +1,6 @@
 import { resolveWeights } from "@/lib/imte";
 import { createDefaultLayerVisibility } from "@/lib/map-config";
-import { DemoState, LayerGroupKey, LayerKey, LayerVisibilityState, MapLevel, ObjectiveId, ProfileId, Weights } from "@/lib/types";
+import { DemoState, ExperienceMode, LayerGroupKey, LayerKey, LayerVisibilityState, MapLevel, ObjectiveId, ProfileId, Weights } from "@/lib/types";
 
 export const DEMO_STATE_STORAGE_KEY = "pid-mvp-demo-state:v1";
 
@@ -10,9 +10,11 @@ export const defaultEnabledLayers: LayerVisibilityState = createDefaultLayerVisi
 
 export function createDefaultDemoState(): DemoState {
   return {
+    hasChosenProfile: false,
     profile: "investidor",
     objective: "hidrogenio-verde",
     weights: resolveWeights("hidrogenio-verde", "investidor"),
+    selectedExperience: "map",
     selectedUf: "BA",
     mapLevel: "national",
     selectedMunicipalityId: undefined,
@@ -46,6 +48,10 @@ function isFiniteNumber(value: unknown): value is number {
 
 function isMapLevel(value: unknown): value is MapLevel {
   return value === "national" || value === "state" || value === "municipal";
+}
+
+function isExperienceMode(value: unknown): value is ExperienceMode {
+  return value === "map" || value === "powerbi";
 }
 
 function isLayerGroupKey(value: unknown): value is LayerGroupKey {
@@ -104,9 +110,11 @@ export function sanitizeDemoState(value: unknown): DemoState {
   const weightFallback = resolveWeights(objective, profile);
 
   return {
+    hasChosenProfile: typeof candidate.hasChosenProfile === "boolean" ? candidate.hasChosenProfile : fallback.hasChosenProfile,
     profile,
     objective,
     weights: sanitizeWeights(candidate.weights, weightFallback),
+    selectedExperience: isExperienceMode(candidate.selectedExperience) ? candidate.selectedExperience : fallback.selectedExperience,
     selectedUf: typeof candidate.selectedUf === "string" ? candidate.selectedUf : fallback.selectedUf,
     mapLevel: isMapLevel(candidate.mapLevel) ? candidate.mapLevel : fallback.mapLevel,
     selectedMunicipalityId:
@@ -132,7 +140,16 @@ export function loadDemoState(storage: Pick<Storage, "getItem"> | undefined): De
       return createDefaultDemoState();
     }
 
-    return sanitizeDemoState(JSON.parse(raw));
+    const parsed = JSON.parse(raw) as Partial<DemoState>;
+    const sanitized = sanitizeDemoState(parsed);
+    if (typeof parsed === "object" && parsed && typeof parsed.hasChosenProfile !== "boolean" && isProfileId(parsed.profile)) {
+      return {
+        ...sanitized,
+        hasChosenProfile: true
+      };
+    }
+
+    return sanitized;
   } catch {
     return createDefaultDemoState();
   }

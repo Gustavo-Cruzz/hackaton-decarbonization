@@ -27,6 +27,7 @@ function parseLayerList(value: string | null) {
 
 export function demoStateToSearchParams(state: DemoState) {
   const params = new URLSearchParams();
+  params.set("experience", state.selectedExperience);
   params.set("selectedUf", state.selectedUf);
   params.set("mapLevel", state.mapLevel);
   params.set("profile", state.profile);
@@ -49,6 +50,7 @@ export function applySearchParamsToState(fallback: DemoState, searchParams: URLS
   const compareUfs = searchParams.get("compareUfs");
   const layerOpacity = Number(searchParams.get("layerOpacity"));
 
+  next.selectedExperience = searchParams.get("experience") === "powerbi" ? "powerbi" : fallback.selectedExperience;
   next.selectedUf = searchParams.get("selectedUf") ?? fallback.selectedUf;
   next.mapLevel =
     searchParams.get("mapLevel") === "municipal" || searchParams.get("mapLevel") === "state" || searchParams.get("mapLevel") === "national"

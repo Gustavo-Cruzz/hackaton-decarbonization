@@ -16,7 +16,6 @@ describe("chat engine", () => {
 
     expect(response.answer).toContain("Bahia");
     expect(response.criteriaUsed).toContain("energia limpa");
-    expect(response.mvpDisclaimer).toContain("ANEEL SIGA");
     expect(response.territorialContext).toContain("Bahia");
   });
 

@@ -21,6 +21,7 @@ export type LayerKey =
 
 export type LayerGroupKey = "energia" | "infraestrutura" | "industria" | "logistica" | "indicadores";
 export type MapLevel = "national" | "state" | "municipal";
+export type ExperienceMode = "map" | "powerbi";
 export type LegendType = "range" | "symbols";
 export type DataStatus = "official" | "hybrid" | "curated" | "demonstrative" | "partial" | "unavailable";
 
@@ -76,6 +77,7 @@ export interface ProfileConfig {
   label: string;
   tone: string;
   suggestedObjective: ObjectiveId;
+  summary?: string;
   defaultWeights?: Partial<Weights>;
   suggestedQuestions: string[];
   insightCards: string[];
@@ -121,7 +123,7 @@ export interface ChatResponse {
   answer: string;
   criteriaUsed: string;
   recommendation: string;
-  mvpDisclaimer: string;
+  mvpDisclaimer?: string;
   referencedTerritories: string[];
   territorialContext?: string;
 }
@@ -129,9 +131,11 @@ export interface ChatResponse {
 export type ChatUiState = "idle" | "loading" | "success" | "error";
 
 export interface DemoState {
+  hasChosenProfile: boolean;
   profile: ProfileId;
   objective: ObjectiveId;
   weights: Weights;
+  selectedExperience: ExperienceMode;
   selectedUf: string;
   mapLevel: MapLevel;
   selectedMunicipalityId?: string;

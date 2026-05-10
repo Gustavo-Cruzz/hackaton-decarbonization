@@ -24,6 +24,8 @@ describe("demo state helpers", () => {
     expect(state.objective).toBe("hidrogenio-verde");
     expect(state.selectedUf).toBe("BA");
     expect(state.mapLevel).toBe("national");
+    expect(state.selectedExperience).toBe("map");
+    expect(state.hasChosenProfile).toBe(false);
     expect(state.compareUfs).toEqual(["BA", "CE", "ES"]);
     expect(state.chatOpen).toBe(true);
   });
@@ -41,6 +43,21 @@ describe("demo state helpers", () => {
     saveDemoState({ setItem }, createDefaultDemoState());
 
     expect(setItem).toHaveBeenCalledWith(DEMO_STATE_STORAGE_KEY, expect.any(String));
+  });
+
+  it("treats legacy persisted state as already onboarded", () => {
+    const state = loadDemoState({
+      getItem: vi.fn(() =>
+        JSON.stringify({
+          profile: "engenheiro",
+          objective: "industria-baixo-carbono",
+          selectedUf: "BA"
+        })
+      )
+    });
+
+    expect(state.hasChosenProfile).toBe(true);
+    expect(state.profile).toBe("engenheiro");
   });
 
   it("updates comparison list with max three territories", () => {

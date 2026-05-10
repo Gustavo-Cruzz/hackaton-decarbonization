@@ -98,7 +98,6 @@ export function ChatbotPanel({
             <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">Recomendacao</div>
             <p className="mt-2 text-sm text-[var(--foreground)]">{response.recommendation}</p>
           </div>
-          <p className="text-xs text-[var(--muted)]">{response.mvpDisclaimer}</p>
         </div>
       ) : null}
     </section>
